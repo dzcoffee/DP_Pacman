@@ -10,6 +10,15 @@
 * [Technologies](#technologies)
 * [Setup](#setup)
 ___
+## 팀 소개
+
+| 윤도경 | 김규리 | 이정인 | 정훈석 |
+| :---: | :---: | :---: | :---: |
+| <img src="https://avatars.githubusercontent.com/u/115972127?v=4" width="200"> | <img src="https://avatars.githubusercontent.com/u/104880000?v=4" width="200"> | <img src="https://avatars.githubusercontent.com/u/80769394?v=4" width="200"> | <img src="https://avatars.githubusercontent.com/u/44901486?v=4" width="200"> |
+| [@윤도경](https://github.com/dzcoffee) | [@김규리](https://github.com/rahanaman) | [@Jeong](https://github.com/Jeong-In-Lee) | [@Jeong](https://github.com/HunSeokJeong) |
+| (기여) | (기여) | (기여) | (기여) |
+
+___
 ## General info
 Good ol' PacMan.
 
@@ -48,3 +57,4 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
   <a href=""><img src="https://res.cloudinary.com/dek4evg4t/image/upload/v1562055192/pac-man-logo-icon-512x512.png" width="50"></a>
   <br>
 </h1>
+
