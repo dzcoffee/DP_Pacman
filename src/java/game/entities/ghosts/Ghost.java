@@ -30,6 +30,8 @@ public abstract class Ghost extends MovingEntity {
 
     protected IGhostStrategy strategy;
 
+    private Game game;
+
     public Ghost(int xPos, int yPos, String spriteName) {
         super(32, xPos, yPos, 2, spriteName, 2, 0.1f);
 
@@ -49,6 +51,10 @@ public abstract class Ghost extends MovingEntity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setGame(Game game) {
+    	this.game = game;
     }
 
     //Méthodes pour les transitions entre les différents états
@@ -102,6 +108,9 @@ public abstract class Ghost extends MovingEntity {
 
             if (frightenedTimer >= (60 * 7)) {
                 state.timerFrightenedModeOver();
+                if (game != null) {
+                    game.onGhostFrightenedTimerOver(this);
+                }
             }
         }
 
@@ -124,6 +133,9 @@ public abstract class Ghost extends MovingEntity {
         //Si le fantôme est sur la case au milieu sa maison, l'état est notifié afin d'appliquer la transition adéquate
         if (xPos == 208 && yPos == 200) {
             state.insideHouse();
+            if (game != null) {
+                game.onGhostArrivedHome(this);
+            }
         }
 
         //Selon l'état, le fantôme calcule sa prochaine direction, et sa position est ensuite mise à jour

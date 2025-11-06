@@ -9,6 +9,7 @@ import game.ghostStates.FrightenedMode;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
+import game.utils.SoundManager;
 
 import java.awt.*;
 import java.net.URISyntaxException;
@@ -25,6 +26,8 @@ public class Game implements Observer {
     private static Pacman pacman;
     private static Blinky blinky;
 
+    private SoundManager soundManager;
+    private int frightenedGhostCount = 0;
     private static boolean firstInput = false;
 
     public Game(){
@@ -43,6 +46,8 @@ public class Game implements Observer {
 
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
+        this.soundManager = new SoundManager();
+        soundManager.gameStart();
 
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
@@ -74,6 +79,7 @@ public class Game implements Observer {
                     }
 
                     Ghost ghost = abstractGhostFactory.makeGhost(xx * cellSize, yy * cellSize);
+                    ghost.setGame(this);
                     ghosts.add(ghost);
                     if (dataChar.equals("b")) {
                         blinky = (Blinky) ghost;
@@ -135,12 +141,16 @@ public class Game implements Observer {
     @Override
     public void updatePacGumEaten(PacGum pg) {
         pg.destroy(); //La PacGum est détruite quand Pacman la mange
+        soundManager.playPacGumSound();
     }
 
     @Override
     public void updateSuperPacGumEaten(SuperPacGum spg) {
         spg.destroy(); //La SuperPacGum est détruite quand Pacman la mange
+        soundManager.playFrightLoop();
+        frightenedGhostCount = 0;
         for (Ghost gh : ghosts) {
+            frightenedGhostCount++;
             gh.getState().superPacGumEaten(); //S'il existe une transition particulière quand une SuperPacGum est mangée, l'état des fantômes change
         }
     }
@@ -148,7 +158,9 @@ public class Game implements Observer {
     @Override
     public void updateGhostCollision(Ghost gh) {
         if (gh.getState() instanceof FrightenedMode) {
+            frightenedGhostCount--;
             gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
+            soundManager.playEatenLoop();
         }else if (!(gh.getState() instanceof EatenMode)) {
             System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
             System.exit(0); //TODO
@@ -161,5 +173,16 @@ public class Game implements Observer {
 
     public static boolean getFirstInput() {
         return firstInput;
+    }
+
+    public void onGhostFrightenedTimerOver(Ghost gh) {
+    	frightenedGhostCount--;
+    	System.out.println(frightenedGhostCount);
+    	if (frightenedGhostCount <= 0) {
+    		soundManager.stopFrightLoop();
+    	}
+    }
+    public void onGhostArrivedHome(Ghost gh) {
+        soundManager.stopEatenLoop(); 
     }
 }
