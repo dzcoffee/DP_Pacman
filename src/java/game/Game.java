@@ -4,8 +4,10 @@ import game.entities.*;
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
 import game.ghostFactory.*;
+import game.ghostStates.ChaseMode;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
+import game.ghostStates.ScatterMode;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
@@ -150,7 +152,7 @@ public class Game implements Observer {
         soundManager.playFrightLoop();
         frightenedGhostCount = 0;
         for (Ghost gh : ghosts) {
-            frightenedGhostCount++;
+            if ((gh.getState() instanceof ChaseMode)||(gh.getState() instanceof ScatterMode)) frightenedGhostCount++;
             gh.getState().superPacGumEaten(); //S'il existe une transition particulière quand une SuperPacGum est mangée, l'état des fantômes change
         }
     }
