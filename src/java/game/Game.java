@@ -177,7 +177,6 @@ public class Game implements Observer {
 
     public void onGhostFrightenedTimerOver(Ghost gh) {
     	frightenedGhostCount--;
-    	System.out.println(frightenedGhostCount);
     	if (frightenedGhostCount <= 0) {
     		soundManager.stopFrightLoop();
     	}
