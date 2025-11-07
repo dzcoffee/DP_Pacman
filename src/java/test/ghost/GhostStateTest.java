@@ -25,6 +25,14 @@ public class GhostStateTest {
             this.xPos = x;
             this.yPos = y;
         }
+        public void setChasing(boolean isChasing){
+            this.isChasing = isChasing;
+        }
+
+        public boolean getChasing(){
+            return this.isChasing;
+        }
+
 
     }
 
@@ -92,29 +100,23 @@ public class GhostStateTest {
     }
 
     @Test
-    public void testGhostState_ChaseScatterModeTimerTest() {
+    public void testGhostState_modeTimer(){
         TestGhost g = new TestGhost(0, 0);
-
         g.switchScatterMode();
-        Assertions.assertThat(g.getState()).isInstanceOf(ScatterMode.class);
-
+        g.setChasing(false);
         Game.setFirstInput(true);
-
-        // 5초 동안 업데이트
-        for (int i = 0; i < 60 * 5; i++) {
-            g.update();
-        }
+        for (int i = 0; i < 60 * 5; i++) g.update();
         Assertions.assertThat(g.getState()).isInstanceOf(ChaseMode.class);
-
-        // 다시 20초 동안 업데이트
-        for (int i = 0; i < 60 * 20; i++) {
-            g.update();
-        }
+        Assertions.assertThat(g.getChasing()).isTrue();
+        for (int i = 0; i < 60 * 15; i++) g.update();
         Assertions.assertThat(g.getState()).isInstanceOf(ScatterMode.class);
+        Assertions.assertThat(g.getChasing()).isFalse();
+
+
     }
 
     @Test
-    public void testGhostState_ChangeToFrightenedTest() {
+    public void testGhostState_changeToFrightenedTest() {
         Pacman pacman = new Pacman(0, 0);
         DummyGame dummyGame = new DummyGame();
 
@@ -135,7 +137,7 @@ public class GhostStateTest {
     }
 
     @Test
-    public void testGhostState_ChangeToEatenTest() {
+    public void testGhostState_changeToEatenTest() {
         Pacman pacman = new Pacman(0, 0);
         DummyGame dummyGame = new DummyGame();
 
@@ -151,7 +153,7 @@ public class GhostStateTest {
     }
 
     @Test
-    public void testGhostState_ChangeToHouseTest()  {
+    public void testGhostState_changeToHouseTest()  {
         TestGhost ghost = new TestGhost(0, 0);
         ghost.switchEatenMode();
         ghost.setPosition(208,200);
@@ -161,12 +163,33 @@ public class GhostStateTest {
     }
 
     @Test
-    public void testGhostState_ChangeToChaseOrScatterTest()  {
+    public void testGhostState_changeToChaseOrScatterTest()  {
         TestGhost ghost = new TestGhost(0, 0);
         ghost.switchHouseMode();
         ghost.setPosition(208,168);
         Game.setFirstInput(true);
         ghost.update();
         Assertions.assertThat(ghost.getState()).isNotInstanceOf(HouseMode.class);
+    }
+
+    @Test
+    public void testGhostState_outsideHouse(){
+        GhostStateTest.TestGhost g = new GhostStateTest.TestGhost(0, 0);
+        Game.setFirstInput(true);
+        g.setPosition(208,168);
+        g.update();
+        Assertions.assertThat(g.getState()).isNotInstanceOf(HouseMode.class);
+
+    }
+
+    @Test
+    public void testGhostState_insideHouse(){
+        GhostStateTest.TestGhost g = new GhostStateTest.TestGhost(0, 0);
+        g.switchEatenMode();
+        Game.setFirstInput(true);
+        g.setPosition(208,200);
+        g.update();
+        Assertions.assertThat(g.getState()).isInstanceOf(HouseMode.class);
+
     }
 }
