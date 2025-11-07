@@ -12,12 +12,21 @@ import game.ghostStrategies.ClydeStrategy;
 import game.ghostStrategies.IGhostStrategy;
 import game.ghostStrategies.InkyStrategy;
 import game.ghostStrategies.PinkyStrategy;
-import game.utils.Utils;
 import java.io.IOException;
 import org.assertj.core.api.Assertions;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class GhostStrategyTest {
+
+    static Game game;
+    static GameplayPanel gameplayPanel;
+
+    @BeforeClass
+    public static void setup() throws IOException {
+        game = new Game();
+        gameplayPanel = new GameplayPanel(100,100);
+    }
 
     @Test
     public void testCreateStrategy() {
@@ -33,35 +42,57 @@ public class GhostStrategyTest {
     }
 
     @Test
-    public void testBlinkyStrategy() throws IOException {
+    public void testBlinkyStrategy() {
         IGhostStrategy strategy = new BlinkyStrategy();
-        Game game = new Game();
-        GameplayPanel gameplayPanel = new GameplayPanel(100,100);
 
         // getChaseTargetPosition test
         int[] position1 = strategy.getChaseTargetPosition();
-        Assertions.assertThat(position1[0]).isEqualTo(Game.getPacman().getxPos());
-        Assertions.assertThat(position1[1]).isEqualTo(Game.getPacman().getyPos());
+        Assertions.assertThat(position1).isEqualTo(new int[] {208, 360});
 
         // getScatterTargetPosition test
         int[] position2 = strategy.getScatterTargetPosition();
-        Assertions.assertThat(position2[0]).isEqualTo(GameplayPanel.width);
-        Assertions.assertThat(position2[1]).isEqualTo(0);
+        Assertions.assertThat(position2).isEqualTo(new int[] {100, 0});
     }
 
     @Test
     public void testPinkyStrategy(){
         IGhostStrategy strategy = new PinkyStrategy();
-        Game game = new Game();
 
         // getChaseTargetPosition test
         int[] position1 = strategy.getChaseTargetPosition();
-        int[] answerPosition = Utils.getPointDistanceDirection(Game.getPacman().getxPos(), Game.getPacman().getyPos(), 64, Utils.directionConverter(Game.getPacman().getDirection()));
-        Assertions.assertThat(position1).isEqualTo(answerPosition);
+        Assertions.assertThat(position1).isEqualTo(new int[] {272, 360});
 
         // getScatterTargetPosition test
         int[] position2 = strategy.getScatterTargetPosition();
-        Assertions.assertThat(position2[0]).isEqualTo(0);
-        Assertions.assertThat(position2[1]).isEqualTo(0);
+        Assertions.assertThat(position2).isEqualTo(new int[] {0, 0});
+    }
+
+    @Test
+    public void testClydeStrategy(){
+        IGhostStrategy strategy1 = new ClydeStrategy(new Clyde(0,0));
+        IGhostStrategy strategy2 = new ClydeStrategy(new Clyde(208,350));
+
+        // getChaseTargetPosition test
+        int[] position1 = strategy1.getChaseTargetPosition();
+        int[] position2 = strategy2.getChaseTargetPosition();
+        Assertions.assertThat(position1).isEqualTo(new int[] {208, 360});
+        Assertions.assertThat(position2).isEqualTo(new int[] {0, 100});
+
+        // getScatterTargetPosition test
+        int[] position3 = strategy1.getScatterTargetPosition();
+        Assertions.assertThat(position3).isEqualTo(new int[] {0, 100});
+    }
+
+    @Test
+    public void testInkyStrategy(){
+        IGhostStrategy strategy1 = new InkyStrategy(new Blinky(0,0));
+
+        // getChaseTargetPosition test
+        int[] position1 = strategy1.getChaseTargetPosition();
+        Assertions.assertThat(position1).isEqualTo(new int[] {480, 720});
+
+        // getScatterTargetPosition test
+        int[] position2 = strategy1.getScatterTargetPosition();
+        Assertions.assertThat(position2).isEqualTo(new int[] {100, 100});
     }
 }
