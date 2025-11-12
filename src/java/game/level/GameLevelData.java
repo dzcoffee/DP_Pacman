@@ -2,11 +2,11 @@ package game.level;
 
 public class GameLevelData {
 
-    private final float[] speedData = {0.5f,1,2};
+    private static final float[] speedData = {0.5f,1,2};
+
     private int pacmanSpeedIndex;
     private int ghostSpeedIndex;
     private int pacmanLife;
-
 
     public GameLevelData() {
         init();
@@ -21,7 +21,6 @@ public class GameLevelData {
 
     public int getPacmanLife() {
         return pacmanLife;
-
     }
 
     public void increasePacmanLife() {

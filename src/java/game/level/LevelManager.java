@@ -12,6 +12,10 @@ public class LevelManager implements ILevelDataSubject {
         this.observerCollection = new ArrayList<>();
     }
 
+    public int getPacmanLife(){
+        return levelData.getPacmanLife();
+    }
+
     public void increasePacmanLife(){
         levelData.increasePacmanLife();
         notify(levelData);

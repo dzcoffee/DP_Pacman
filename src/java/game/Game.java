@@ -103,6 +103,8 @@ public class Game implements Observer {
         //Level Manager
         levelManager = new LevelManager();
         registerLevelManager();
+        levelManager.increasePacmanLife();
+
     }
 
     // 레벨매니저 구독
@@ -167,8 +169,21 @@ public class Game implements Observer {
         if (gh.getState() instanceof FrightenedMode) {
             gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
         }else if (!(gh.getState() instanceof EatenMode)) {
-            System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
-            System.exit(0); //TODO
+            // 게임 life 검사 로직 추가
+            levelManager.decreasePacmanLife();
+            int pacmanLife = levelManager.getPacmanLife();
+
+            if(pacmanLife > 0){
+                gh.getState().eaten();
+            }
+            else{
+                //게임 종료 로직
+                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
+                System.exit(0); //TODO
+            }
+
+
+
         }
     }
 
