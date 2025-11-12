@@ -6,6 +6,7 @@ import game.entities.ghosts.Ghost;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
+import game.level.LevelManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
@@ -26,6 +27,8 @@ public class Game implements Observer {
     private static Blinky blinky;
 
     private static boolean firstInput = false;
+
+    private final LevelManager levelManager;
 
     public Game(){
         //Initialisation du jeu
@@ -95,6 +98,20 @@ public class Game implements Observer {
                 walls.add((Wall) o);
             }
         }
+
+
+        //Level Manager
+        levelManager = new LevelManager();
+        registerLevelManager();
+    }
+
+    // 레벨매니저 구독
+    private void registerLevelManager(){
+        levelManager.registerObserver(pacman);
+        for(Ghost ghost : ghosts){
+            levelManager.registerObserver(ghost);
+        }
+
     }
 
     public static List<Wall> getWalls() {
