@@ -6,6 +6,7 @@ import game.entities.ghosts.Ghost;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
+import game.level.FrightenAllCommand;
 import game.level.LevelManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
@@ -15,6 +16,8 @@ import java.awt.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 //Classe gérant le jeu en lui même
 public class Game implements Observer {
@@ -101,9 +104,8 @@ public class Game implements Observer {
 
 
         //Level Manager
-        levelManager = new LevelManager();
+        levelManager = new LevelManager(new FrightenAllCommand(this));
         registerLevelManager();
-        levelManager.increasePacmanLife();
 
     }
 
@@ -114,6 +116,12 @@ public class Game implements Observer {
             levelManager.registerObserver(ghost);
         }
 
+    }
+
+    public void eatGhostAll(){
+        for(Ghost ghost : ghosts){
+            ghost.getState().eaten();
+        }
     }
 
     public static List<Wall> getWalls() {

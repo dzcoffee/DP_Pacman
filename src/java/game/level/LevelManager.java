@@ -1,13 +1,21 @@
 package game.level;
 
+import game.Game;
+
 import java.util.ArrayList;
 import java.util.List;
+
+
+
 
 public class LevelManager implements ILevelDataSubject {
     private final GameLevelData levelData;
     private final List<ILevelDataObserver> observerCollection;
 
-    public LevelManager() {
+    private final FrightenAllCommand frightenAllCommand;
+
+    public LevelManager(FrightenAllCommand frightenAllCommand) {
+        this.frightenAllCommand = frightenAllCommand;
         this.levelData = new GameLevelData();
         this.observerCollection = new ArrayList<>();
     }
@@ -44,6 +52,10 @@ public class LevelManager implements ILevelDataSubject {
     public void decreaseGhostSpeed(){
         levelData.decreaseGhostSpeed();
         notify(levelData);
+    }
+
+    public void frightenAll(){
+        frightenAllCommand.execute();
     }
 
     @Override
