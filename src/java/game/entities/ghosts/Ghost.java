@@ -4,6 +4,8 @@ import game.Game;
 import game.entities.MovingEntity;
 import game.ghostStates.*;
 import game.ghostStrategies.IGhostStrategy;
+import game.level.GameLevelData;
+import game.level.ILevelDataObserver;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 //Classe abtraite pour décrire les fantômes
-public abstract class Ghost extends MovingEntity {
+public abstract class Ghost extends MovingEntity implements ILevelDataObserver {
     protected GhostState state;
 
     protected final GhostState chaseMode;
@@ -159,5 +161,10 @@ public abstract class Ghost extends MovingEntity {
             g.drawImage(sprite.getSubimage((int)subimage * size + direction * size * nbSubimagesPerCycle, 0, size, size), this.xPos, this.yPos,null);
         }
 
+    }
+
+    @Override
+    public void update(GameLevelData data) {
+        spdMultiplier = data.getGhostSpeed();
     }
 }
