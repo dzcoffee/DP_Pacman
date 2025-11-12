@@ -22,7 +22,9 @@ public abstract class Ghost extends MovingEntity {
 
     protected int modeTimer = 0;
     protected int frightenedTimer = 0;
-    protected boolean isChasing = false;
+    protected int chaseTimerInterval = 15; // chaseState interval
+    protected int scatterTimerInterval = 5; // scatterState interval
+    protected boolean isChasing = false; // 현재 state가 chase or scatter 이면 chasing여부 판단 // 그 외 state에서 chase.scatter로 전환할 때 어느쪽으로 전환할 지 check
 
     protected static BufferedImage frightenedSprite1;
     protected static BufferedImage frightenedSprite2;
@@ -54,9 +56,12 @@ public abstract class Ghost extends MovingEntity {
     //Méthodes pour les transitions entre les différents états
     public void switchChaseMode() {
         state = chaseMode;
+        modeTimer = 0;
     }
     public void switchScatterMode() {
         state = scatterMode;
+        modeTimer = 0;
+
     }
 
     public void switchFrightenedMode() {
@@ -92,6 +97,14 @@ public abstract class Ghost extends MovingEntity {
         return state;
     }
 
+    public void setChaseTimerInterval(int interval) {
+        this.chaseTimerInterval = interval;
+    }
+
+    public void setScatterTimerInterval(int interval) {
+        this.scatterTimerInterval = interval;
+    }
+
     @Override
     public void update() {
         if (!Game.getFirstInput()) return; //Les fantômes ne bougent pas tant que le joueur n'a pas bougé
@@ -110,7 +123,7 @@ public abstract class Ghost extends MovingEntity {
         if (state == chaseMode || state == scatterMode) {
             modeTimer++;
 
-            if ((isChasing && modeTimer >= (60 * 20)) || (!isChasing && modeTimer >= (60 * 5))) {
+            if ((isChasing && modeTimer >= (60 * chaseTimerInterval)) || (!isChasing && modeTimer >= (60 * scatterTimerInterval))) {
                 state.timerModeOver();
                 isChasing = !isChasing;
             }
