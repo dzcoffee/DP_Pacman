@@ -41,11 +41,15 @@ public class LevelUIPanel extends JPanel {
         initOptionsPanel();
     }
 
+    //level Label Update하는 메서드
     public void updateLabel(int incrLevel) {
         this.level += incrLevel;
         this.levelLabel.setText("Level: " + level);
     }
 
+    // 옵션 패널만을 설정한 패널임
+    // 아래와 같은 형태로 구성되어 있음
+    // optionsPanel [ selectLabel + optionsGrid [ option1, option2, option3, option4 ] ]
     private void initOptionsPanel() {
         optionsPanel = new JPanel();
         optionsPanel.setLayout(new BorderLayout());
@@ -93,6 +97,9 @@ public class LevelUIPanel extends JPanel {
         //TODO 테스트 용으로 임시로 작성함 이후 연결 시에는 주석처리 필요
     }
 
+    //해당 메서드로 LevelUpPanel을 보이게 Or 안 보이게 모두 가능
+    // show = true -> 보이게 설정
+    // show = false -> 안 보이게 설정
     public void showLevelUpMenu(boolean show) {
         optionsPanel.setVisible(show);
         if (show) {
@@ -104,21 +111,27 @@ public class LevelUIPanel extends JPanel {
     }
 
     public void changeSelection(int direction) {
+        //direction을 +1로 하면 아래로, -1로 하면 위로
         if (!optionsPanel.isVisible()) return; // 메뉴가 안 보이면 무시
 
         currentSelectionIndex += direction;
 
-        // 범위 제한 (0 ~ 3) - 순환되게 하려면 로직 변경 가능
-        if (currentSelectionIndex < 0) currentSelectionIndex = 0;
-        if (currentSelectionIndex > 3) currentSelectionIndex = 3;
+        // 옵션 Index 선택이 순환되도록 구현하였음
+        // (아래는 옵션이 4개임을 예시로 들어 설명, 실제로는 optionItems의 갯수에 따라 다르게 되도록 구현)
+        // index 3 -> 4가 되면 0번째로 순환
+        // index 0 -> -1이 되면 3번째로 순환
+        if (currentSelectionIndex >= optionItems.length) currentSelectionIndex = 0;
+        if (currentSelectionIndex < 0) currentSelectionIndex = optionItems.length - 1;
 
         updateSelectionVisual();
     }
 
+    //혹시나 SelectionOptionIndex가 필요할까봐 작성했으나 캡슐화 위배로 인해 다르게 수정하는 게 좋음
     public int getSelectedOptionIndex() {
         return currentSelectionIndex;
     }
 
+    // 현재 선택된 옵션 UI의 모습을 바꿔즈는 메서드
     private void updateSelectionVisual() {
         for (int i = 0; i < 4; i++) {
             if (i == currentSelectionIndex) {
