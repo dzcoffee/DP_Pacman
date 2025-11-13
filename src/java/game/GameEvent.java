@@ -1,0 +1,8 @@
+package game;
+
+public enum GameEvent {
+    GHOST_STATE_CHANGED_TO_FRIGHTENED,
+    GHOST_STATE_CHANGED_TO_EATEN,
+    GHOST_TIMER_OVER,
+    GHOST_ARRIVED_HOME
+}

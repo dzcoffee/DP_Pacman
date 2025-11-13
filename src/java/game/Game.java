@@ -1,13 +1,13 @@
 package game;
 
 import game.entities.*;
+
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
 import game.ghostFactory.*;
-import game.ghostStates.ChaseMode;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
-import game.ghostStates.ScatterMode;
+import game.ghostStates.GhostState;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Classe gérant le jeu en lui même
-public class Game implements Observer {
+public class Game implements Observer, GameMediator {
     //Pour lister les différentes entités présentes sur la fenêtre
     private List<Entity> objects = new ArrayList();
     private List<Ghost> ghosts = new ArrayList();
@@ -29,8 +29,16 @@ public class Game implements Observer {
     private static Blinky blinky;
 
     private SoundManager soundManager;
-    private int frightenedGhostCount = 0;
     private static boolean firstInput = false;
+    
+    private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
+        for(Ghost gh: ghosts) {
+            if(ghostState.isInstance(gh.getState())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public Game(){
         //Initialisation du jeu
@@ -81,7 +89,7 @@ public class Game implements Observer {
                     }
 
                     Ghost ghost = abstractGhostFactory.makeGhost(xx * cellSize, yy * cellSize);
-                    ghost.setGame(this);
+                    ghost.setMediator(this);
                     ghosts.add(ghost);
                     if (dataChar.equals("b")) {
                         blinky = (Blinky) ghost;
@@ -149,10 +157,7 @@ public class Game implements Observer {
     @Override
     public void updateSuperPacGumEaten(SuperPacGum spg) {
         spg.destroy(); //La SuperPacGum est détruite quand Pacman la mange
-        soundManager.playFrightLoop();
-        frightenedGhostCount = 0;
         for (Ghost gh : ghosts) {
-            if ((gh.getState() instanceof ChaseMode)||(gh.getState() instanceof ScatterMode)) frightenedGhostCount++;
             gh.getState().superPacGumEaten(); //S'il existe une transition particulière quand une SuperPacGum est mangée, l'état des fantômes change
         }
     }
@@ -160,9 +165,7 @@ public class Game implements Observer {
     @Override
     public void updateGhostCollision(Ghost gh) {
         if (gh.getState() instanceof FrightenedMode) {
-            frightenedGhostCount--;
             gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
-            soundManager.playEatenLoop();
         }else if (!(gh.getState() instanceof EatenMode)) {
             System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
             System.exit(0); //TODO
@@ -177,13 +180,23 @@ public class Game implements Observer {
         return firstInput;
     }
 
-    public void onGhostFrightenedTimerOver(Ghost gh) {
-    	frightenedGhostCount--;
-    	if (frightenedGhostCount <= 0) {
-    		soundManager.stopFrightLoop();
-    	}
-    }
-    public void onGhostArrivedHome(Ghost gh) {
-        soundManager.stopEatenLoop(); 
+    @Override
+    public void notify(GameColleague colleague, GameEvent event) {
+        if (colleague instanceof Ghost) {
+            if (event == GameEvent.GHOST_STATE_CHANGED_TO_FRIGHTENED) {
+                soundManager.playFrightLoop();
+            }
+            if (event == GameEvent.GHOST_TIMER_OVER) {
+                if (!isAnyGhostInState(FrightenedMode.class)) soundManager.stopFrightLoop();
+            }
+            else if (event == GameEvent.GHOST_STATE_CHANGED_TO_EATEN) {
+                soundManager.playEatenLoop();
+            }
+            else if (event == GameEvent.GHOST_ARRIVED_HOME) {
+                if (!isAnyGhostInState(EatenMode.class)) soundManager.stopEatenLoop();
+            }
+        }
+
+        
     }
 }

@@ -1,6 +1,9 @@
 package game.entities.ghosts;
 
 import game.Game;
+import game.GameColleague;
+import game.GameEvent;
+import game.GameMediator;
 import game.entities.MovingEntity;
 import game.ghostStates.*;
 import game.ghostStrategies.IGhostStrategy;
@@ -11,7 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 //Classe abtraite pour décrire les fantômes
-public abstract class Ghost extends MovingEntity {
+public abstract class Ghost extends MovingEntity implements GameColleague{
     protected GhostState state;
 
     protected final GhostState chaseMode;
@@ -30,7 +33,7 @@ public abstract class Ghost extends MovingEntity {
 
     protected IGhostStrategy strategy;
 
-    private Game game;
+    private GameMediator gameMediator;
 
     public Ghost(int xPos, int yPos, String spriteName) {
         super(32, xPos, yPos, 2, spriteName, 2, 0.1f);
@@ -53,8 +56,8 @@ public abstract class Ghost extends MovingEntity {
         }
     }
 
-    public void setGame(Game game) {
-    	this.game = game;
+    public void setMediator(GameMediator mediator) {
+    	this.gameMediator = mediator;
     }
 
     //Méthodes pour les transitions entre les différents états
@@ -67,15 +70,24 @@ public abstract class Ghost extends MovingEntity {
 
     public void switchFrightenedMode() {
         frightenedTimer = 0;
-        state = frightenedMode;
+        state = frightenedMode;                
+        if (gameMediator != null) {
+            gameMediator.notify(this, GameEvent.GHOST_STATE_CHANGED_TO_FRIGHTENED);
+        }
     }
 
     public void switchEatenMode() {
         state = eatenMode;
+        if (gameMediator != null) {
+            gameMediator.notify(this, GameEvent.GHOST_STATE_CHANGED_TO_EATEN);
+        }
     }
 
     public void switchHouseMode() {
         state = houseMode;
+        if (gameMediator != null) {
+            gameMediator.notify(this, GameEvent.GHOST_ARRIVED_HOME);
+        }
     }
 
     public void switchChaseModeOrScatterMode() {
@@ -108,8 +120,8 @@ public abstract class Ghost extends MovingEntity {
 
             if (frightenedTimer >= (60 * 7)) {
                 state.timerFrightenedModeOver();
-                if (game != null) {
-                    game.onGhostFrightenedTimerOver(this);
+                if (gameMediator != null) {
+                    gameMediator.notify(this, GameEvent.GHOST_TIMER_OVER);
                 }
             }
         }
@@ -121,7 +133,7 @@ public abstract class Ghost extends MovingEntity {
 
             if ((isChasing && modeTimer >= (60 * 20)) || (!isChasing && modeTimer >= (60 * 5))) {
                 state.timerModeOver();
-                isChasing = !isChasing;
+                isChasing = !isChasing;        
             }
         }
 
@@ -133,9 +145,6 @@ public abstract class Ghost extends MovingEntity {
         //Si le fantôme est sur la case au milieu sa maison, l'état est notifié afin d'appliquer la transition adéquate
         if (xPos == 208 && yPos == 200) {
             state.insideHouse();
-            if (game != null) {
-                game.onGhostArrivedHome(this);
-            }
         }
 
         //Selon l'état, le fantôme calcule sa prochaine direction, et sa position est ensuite mise à jour
