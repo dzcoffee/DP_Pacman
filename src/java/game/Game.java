@@ -6,6 +6,8 @@ import game.entities.ghosts.Ghost;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
+import game.keyInputManager.DummyLevelUIPannel;
+import game.keyInputManager.KeyInputManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
@@ -26,6 +28,8 @@ public class Game implements Observer {
     private static Blinky blinky;
 
     private static boolean firstInput = false;
+
+    private final KeyInputManager keyInputManager;
 
     public Game(){
         //Initialisation du jeu
@@ -95,6 +99,9 @@ public class Game implements Observer {
                 walls.add((Wall) o);
             }
         }
+
+        //Todo 나중에 지우기 keyInputManager Setting
+        keyInputManager = new KeyInputManager(pacman, new DummyLevelUIPannel());
     }
 
     public static List<Wall> getWalls() {
@@ -114,7 +121,7 @@ public class Game implements Observer {
 
     //Gestion des inputs
     public void input(KeyHandler k) {
-        pacman.input(k);
+        keyInputManager.input(k);
     }
 
     //Rendu de toutes les entités
@@ -143,6 +150,7 @@ public class Game implements Observer {
         for (Ghost gh : ghosts) {
             gh.getState().superPacGumEaten(); //S'il existe une transition particulière quand une SuperPacGum est mangée, l'état des fantômes change
         }
+        keyInputManager.switchPauseState();
     }
 
     @Override
