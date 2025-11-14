@@ -27,7 +27,7 @@ public class KeyInputManager {
     }
 
 
-    public int getGameState() {return gameState.getGameState();}
+    public GameState getGameState() {return gameState;}
 
     public void switchPlayState() {
         gameState = playState;
