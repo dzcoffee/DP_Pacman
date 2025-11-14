@@ -38,6 +38,8 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     protected IGhostStrategy strategy;
 
     private GameMediator gameMediator;
+    private int currentTileX;
+    private int currentTileY;
 
     public Ghost(int xPos, int yPos, String spriteName) {
         super(32, xPos, yPos, 2, spriteName, 2, 0.1f);
@@ -149,6 +151,14 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
             if ((isChasing && modeTimer >= (60 * chaseTimerInterval)) || (!isChasing && modeTimer >= (60 * scatterTimerInterval))) {
                 state.timerModeOver();
                 isChasing = !isChasing;        
+            }
+            int cellSize = 8;
+            int newTileX = xPos / cellSize;
+            int newTileY = yPos / cellSize;
+            if (newTileX >= 0 && newTileY >= 0 && (newTileX != currentTileX || newTileY != currentTileY)) {
+                    this.currentTileX = newTileX;
+                    this.currentTileY = newTileY;
+                    gameMediator.notify(this, GameEvent.GHOST_MOVED_TO_TILE);
             }
         }
 
