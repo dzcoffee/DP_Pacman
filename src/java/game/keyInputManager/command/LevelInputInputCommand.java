@@ -3,11 +3,11 @@ package game.keyInputManager.command;
 import game.keyInputManager.DummyLevelUIPannel;
 import game.utils.KeyHandler;
 
-public class LevelInputCommand implements Command{
+public class LevelInputInputCommand implements InputCommand {
 
     private final DummyLevelUIPannel target;
 
-    public LevelInputCommand(DummyLevelUIPannel levelUIPannel) {
+    public LevelInputInputCommand(DummyLevelUIPannel levelUIPannel) {
         this.target = levelUIPannel;
     }
 

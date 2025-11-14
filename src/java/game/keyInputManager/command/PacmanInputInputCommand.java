@@ -3,11 +3,11 @@ package game.keyInputManager.command;
 import game.entities.Pacman;
 import game.utils.KeyHandler;
 
-public class PacmanInputCommand implements Command {
+public class PacmanInputInputCommand implements InputCommand {
 
     private final Pacman target;
 
-    public PacmanInputCommand(Pacman pacman) {
+    public PacmanInputInputCommand(Pacman pacman) {
         this.target = pacman;
     }
 

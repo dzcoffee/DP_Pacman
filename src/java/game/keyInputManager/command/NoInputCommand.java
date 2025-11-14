@@ -2,6 +2,6 @@ package game.keyInputManager.command;
 
 import game.utils.KeyHandler;
 
-public class NoCommand implements Command{
+public class NoInputCommand implements InputCommand {
     public void execute(KeyHandler k) {};
 }
