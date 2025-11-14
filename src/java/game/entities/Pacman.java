@@ -4,6 +4,8 @@ import game.Game;
 import game.Observer;
 import game.Sujet;
 import game.entities.ghosts.Ghost;
+import game.level.GameLevelData;
+import game.level.ILevelDataObserver;
 import game.utils.CollisionDetector;
 import game.utils.KeyHandler;
 import game.utils.WallCollisionDetector;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Classe pour décrire Pacman
-public class Pacman extends MovingEntity implements Sujet {
+public class Pacman extends MovingEntity implements Sujet, ILevelDataObserver {
     private CollisionDetector collisionDetector;
     private List<Observer> observerCollection;
 
@@ -112,5 +114,10 @@ public class Pacman extends MovingEntity implements Sujet {
     @Override
     public void notifyObserverGhostCollision(Ghost gh) {
         observerCollection.forEach(obs -> obs.updateGhostCollision(gh));
+    }
+
+    @Override
+    public void update(GameLevelData data) {
+        spdMultiplier = data.getPacmanSpeed();
     }
 }

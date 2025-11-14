@@ -10,11 +10,6 @@ public class FrightenedMode extends GhostState{
         super(ghost);
     }
 
-    //Transition lorsque le fantôme est mangé
-    @Override
-    public void eaten() {
-        ghost.switchEatenMode();
-    }
 
     //Transition lorsque le timer d'état effrayé est terminé
     @Override

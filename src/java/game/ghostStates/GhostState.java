@@ -16,7 +16,7 @@ public abstract class GhostState {
     public void superPacGumEaten() {}
     public void timerModeOver() {}
     public void timerFrightenedModeOver() {}
-    public void eaten() {}
+    public void eaten() { ghost.switchEatenMode(); }
     public void outsideHouse() {}
     public void insideHouse() {}
 
