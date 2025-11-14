@@ -17,6 +17,8 @@ public abstract class MovingEntity extends Entity {
     protected int direction = 0;
     protected float imageSpd = 0.2f;
 
+    protected float spdMultiplier = 1;
+
     public MovingEntity(int size, int xPos, int yPos, int spd, String spriteName, int nbSubimagesPerCycle, float imageSpd) {
         super(size, xPos, yPos);
         this.spd = spd;
@@ -36,6 +38,8 @@ public abstract class MovingEntity extends Entity {
 
     public void updatePosition() {
         //Mise à jour de la position de l'entité
+        int xSpd = (int)(this.xSpd * this.spdMultiplier);
+        int ySpd = (int)(this.ySpd * this.spdMultiplier);
         if (!(xSpd == 0 && ySpd == 0)) { //Si la vitesse horizontale ou la vitesse verticale n'est pas nulle, on incrémente la position horizontale et verticale en conséquence
             xPos+=xSpd;
             yPos+=ySpd;

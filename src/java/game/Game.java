@@ -1,24 +1,32 @@
 package game;
 
 import game.entities.*;
+
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
+import game.entities.ghosts.Pinky;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
 import game.keyInputManager.DummyLevelUIPannel;
 import game.keyInputManager.KeyInputManager;
+import game.ghostStates.GhostState;
+import game.level.FrightenAllCommand;
+import game.level.LevelManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
+import game.utils.SoundManager;
 
 import java.awt.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 //Classe gérant le jeu en lui même
-public class Game implements Observer {
+public class Game implements Observer, GameMediator {
     //Pour lister les différentes entités présentes sur la fenêtre
     private List<Entity> objects = new ArrayList();
     private List<Ghost> ghosts = new ArrayList();
@@ -27,7 +35,21 @@ public class Game implements Observer {
     private static Pacman pacman;
     private static Blinky blinky;
 
+    private SoundManager soundManager;
     private static boolean firstInput = false;
+    private StaticEntity[][] gumGrid;
+    private int cellSize = 8;
+
+    private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
+        for(Ghost gh: ghosts) {
+            if(ghostState.isInstance(gh.getState())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private final LevelManager levelManager;
 
     private final KeyInputManager keyInputManager;
 
@@ -43,10 +65,11 @@ public class Game implements Observer {
         }
         int cellsPerRow = data.get(0).size();
         int cellsPerColumn = data.size();
-        int cellSize = 8;
-
+        gumGrid = new StaticEntity[cellsPerColumn][cellsPerRow];
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
+        this.soundManager = new SoundManager();
+        soundManager.gameStart();
 
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
@@ -78,14 +101,19 @@ public class Game implements Observer {
                     }
 
                     Ghost ghost = abstractGhostFactory.makeGhost(xx * cellSize, yy * cellSize);
+                    ghost.setMediator(this);
                     ghosts.add(ghost);
                     if (dataChar.equals("b")) {
                         blinky = (Blinky) ghost;
                     }
                 }else if (dataChar.equals(".")) { //Création des PacGums
-                    objects.add(new PacGum(xx * cellSize, yy * cellSize));
+                    StaticEntity pg = new PacGum(xx * cellSize, yy * cellSize);
+                    objects.add(pg);
+                    gumGrid[yy][xx]= pg;
                 }else if (dataChar.equals("o")) { //Création des SuperPacGums
-                    objects.add(new SuperPacGum(xx * cellSize, yy * cellSize));
+                    StaticEntity spg = new SuperPacGum(xx * cellSize, yy * cellSize);
+                    objects.add(spg);
+                    gumGrid[yy][xx]= spg;
                 }else if (dataChar.equals("-")) { //Création des murs de la maison des fantômes
                     objects.add(new GhostHouse(xx * cellSize, yy * cellSize));
                 }
@@ -102,6 +130,26 @@ public class Game implements Observer {
 
         //Todo 나중에 지우기 keyInputManager Setting
         keyInputManager = new KeyInputManager(pacman, new DummyLevelUIPannel());
+
+        //Level Manager
+        levelManager = new LevelManager(new FrightenAllCommand(this));
+        registerLevelManager();
+
+    }
+
+    // 레벨매니저 구독
+    private void registerLevelManager(){
+        levelManager.registerObserver(pacman);
+        for(Ghost ghost : ghosts){
+            levelManager.registerObserver(ghost);
+        }
+
+    }
+
+    public void eatGhostAll(){
+        for(Ghost ghost : ghosts){
+            ghost.getState().eaten();
+        }
     }
 
     public static List<Wall> getWalls() {
@@ -142,6 +190,7 @@ public class Game implements Observer {
     @Override
     public void updatePacGumEaten(PacGum pg) {
         pg.destroy(); //La PacGum est détruite quand Pacman la mange
+        soundManager.playPacGumSound();
     }
 
     @Override
@@ -157,8 +206,21 @@ public class Game implements Observer {
         if (gh.getState() instanceof FrightenedMode) {
             gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
         }else if (!(gh.getState() instanceof EatenMode)) {
-            System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
-            System.exit(0); //TODO
+            // 게임 life 검사 로직 추가
+            levelManager.decreasePacmanLife();
+            int pacmanLife = levelManager.getPacmanLife();
+
+            if(pacmanLife > 0){
+                gh.getState().eaten();
+            }
+            else{
+                //게임 종료 로직
+                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
+                System.exit(0); //TODO
+            }
+
+
+
         }
     }
 
@@ -168,5 +230,35 @@ public class Game implements Observer {
 
     public static boolean getFirstInput() {
         return firstInput;
+    }
+
+    @Override
+    public void notify(GameColleague colleague, GameEvent event) {
+        if (colleague instanceof Ghost) {
+            if (event == GameEvent.GHOST_STATE_CHANGED_TO_FRIGHTENED) {
+                soundManager.playFrightLoop();
+            }
+            if (event == GameEvent.GHOST_TIMER_OVER) {
+                if (!isAnyGhostInState(FrightenedMode.class)) soundManager.stopFrightLoop();
+            }
+            else if (event == GameEvent.GHOST_STATE_CHANGED_TO_EATEN) {
+                soundManager.playEatenLoop();
+            }
+            else if (event == GameEvent.GHOST_ARRIVED_HOME) {
+                if (!isAnyGhostInState(EatenMode.class)) soundManager.stopEatenLoop();
+            }
+            else if (event == GameEvent.GHOST_MOVED_TO_TILE) {
+                Ghost gh = (Ghost) colleague;
+                int x_pos = gh.getxPos(), y_pos = gh.getyPos();
+                StaticEntity gum = gumGrid[(y_pos/cellSize + 1)%gumGrid.length][(x_pos/cellSize + 1)%gumGrid[0].length];
+                if (gh instanceof Pinky) {
+                    if (gum != null) {
+                        gum.revive();
+                    }
+                }
+            }
+        }
+
+        
     }
 }
