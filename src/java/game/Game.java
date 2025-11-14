@@ -150,7 +150,6 @@ public class Game implements Observer {
         for (Ghost gh : ghosts) {
             gh.getState().superPacGumEaten(); //S'il existe une transition particulière quand une SuperPacGum est mangée, l'état des fantômes change
         }
-        keyInputManager.switchPauseState();
     }
 
     @Override
