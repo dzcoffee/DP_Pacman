@@ -1,9 +1,6 @@
 package game.entities.ghosts;
 
 import game.Game;
-import game.GameColleague;
-import game.GameEvent;
-import game.GameMediator;
 import game.entities.MovingEntity;
 import game.ghostStates.*;
 import game.ghostStrategies.IGhostStrategy;
@@ -16,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 //Classe abtraite pour décrire les fantômes
-public abstract class Ghost extends MovingEntity implements ILevelDataObserver, GameColleague{
+public abstract class Ghost extends MovingEntity implements ILevelDataObserver {
     protected GhostState state;
 
     protected final GhostState chaseMode;
@@ -36,8 +33,6 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     protected static BufferedImage eatenSprite;
 
     protected IGhostStrategy strategy;
-
-    private GameMediator gameMediator;
 
     public Ghost(int xPos, int yPos, String spriteName) {
         super(32, xPos, yPos, 2, spriteName, 2, 0.1f);
@@ -60,10 +55,6 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
         }
     }
 
-    public void setMediator(GameMediator mediator) {
-    	this.gameMediator = mediator;
-    }
-
     //Méthodes pour les transitions entre les différents états
     public void switchChaseMode() {
         state = chaseMode;
@@ -77,24 +68,15 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
 
     public void switchFrightenedMode() {
         frightenedTimer = 0;
-        state = frightenedMode;                
-        if (gameMediator != null) {
-            gameMediator.notify(this, GameEvent.GHOST_STATE_CHANGED_TO_FRIGHTENED);
-        }
+        state = frightenedMode;
     }
 
     public void switchEatenMode() {
         state = eatenMode;
-        if (gameMediator != null) {
-            gameMediator.notify(this, GameEvent.GHOST_STATE_CHANGED_TO_EATEN);
-        }
     }
 
     public void switchHouseMode() {
         state = houseMode;
-        if (gameMediator != null) {
-            gameMediator.notify(this, GameEvent.GHOST_ARRIVED_HOME);
-        }
     }
 
     public void switchChaseModeOrScatterMode() {
@@ -135,9 +117,6 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
 
             if (frightenedTimer >= (60 * 7)) {
                 state.timerFrightenedModeOver();
-                if (gameMediator != null) {
-                    gameMediator.notify(this, GameEvent.GHOST_TIMER_OVER);
-                }
             }
         }
 
@@ -148,7 +127,7 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
 
             if ((isChasing && modeTimer >= (60 * chaseTimerInterval)) || (!isChasing && modeTimer >= (60 * scatterTimerInterval))) {
                 state.timerModeOver();
-                isChasing = !isChasing;        
+                isChasing = !isChasing;
             }
         }
 

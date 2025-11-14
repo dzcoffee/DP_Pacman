@@ -1,19 +1,16 @@
 package game;
 
 import game.entities.*;
-
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
-import game.ghostStates.GhostState;
 import game.level.FrightenAllCommand;
 import game.level.LevelManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
-import game.utils.SoundManager;
 
 import java.awt.*;
 import java.net.URISyntaxException;
@@ -23,7 +20,7 @@ import java.util.List;
 
 
 //Classe gérant le jeu en lui même
-public class Game implements Observer, GameMediator {
+public class Game implements Observer {
     //Pour lister les différentes entités présentes sur la fenêtre
     private List<Entity> objects = new ArrayList();
     private List<Ghost> ghosts = new ArrayList();
@@ -32,17 +29,7 @@ public class Game implements Observer, GameMediator {
     private static Pacman pacman;
     private static Blinky blinky;
 
-    private SoundManager soundManager;
     private static boolean firstInput = false;
-    
-    private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
-        for(Ghost gh: ghosts) {
-            if(ghostState.isInstance(gh.getState())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private final LevelManager levelManager;
 
@@ -62,8 +49,6 @@ public class Game implements Observer, GameMediator {
 
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
-        this.soundManager = new SoundManager();
-        soundManager.gameStart();
 
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
@@ -95,7 +80,6 @@ public class Game implements Observer, GameMediator {
                     }
 
                     Ghost ghost = abstractGhostFactory.makeGhost(xx * cellSize, yy * cellSize);
-                    ghost.setMediator(this);
                     ghosts.add(ghost);
                     if (dataChar.equals("b")) {
                         blinky = (Blinky) ghost;
@@ -178,7 +162,6 @@ public class Game implements Observer, GameMediator {
     @Override
     public void updatePacGumEaten(PacGum pg) {
         pg.destroy(); //La PacGum est détruite quand Pacman la mange
-        soundManager.playPacGumSound();
     }
 
     @Override
@@ -218,25 +201,5 @@ public class Game implements Observer, GameMediator {
 
     public static boolean getFirstInput() {
         return firstInput;
-    }
-
-    @Override
-    public void notify(GameColleague colleague, GameEvent event) {
-        if (colleague instanceof Ghost) {
-            if (event == GameEvent.GHOST_STATE_CHANGED_TO_FRIGHTENED) {
-                soundManager.playFrightLoop();
-            }
-            if (event == GameEvent.GHOST_TIMER_OVER) {
-                if (!isAnyGhostInState(FrightenedMode.class)) soundManager.stopFrightLoop();
-            }
-            else if (event == GameEvent.GHOST_STATE_CHANGED_TO_EATEN) {
-                soundManager.playEatenLoop();
-            }
-            else if (event == GameEvent.GHOST_ARRIVED_HOME) {
-                if (!isAnyGhostInState(EatenMode.class)) soundManager.stopEatenLoop();
-            }
-        }
-
-        
     }
 }
