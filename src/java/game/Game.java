@@ -4,6 +4,7 @@ import game.entities.*;
 
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
+import game.entities.ghosts.Pinky;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
@@ -34,7 +35,9 @@ public class Game implements Observer, GameMediator {
 
     private SoundManager soundManager;
     private static boolean firstInput = false;
-    
+    private StaticEntity[][] gumGrid;
+    private int cellSize = 8;
+
     private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
         for(Ghost gh: ghosts) {
             if(ghostState.isInstance(gh.getState())) {
@@ -58,8 +61,7 @@ public class Game implements Observer, GameMediator {
         }
         int cellsPerRow = data.get(0).size();
         int cellsPerColumn = data.size();
-        int cellSize = 8;
-
+        gumGrid = new StaticEntity[cellsPerColumn][cellsPerRow];
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
         this.soundManager = new SoundManager();
@@ -101,9 +103,13 @@ public class Game implements Observer, GameMediator {
                         blinky = (Blinky) ghost;
                     }
                 }else if (dataChar.equals(".")) { //Création des PacGums
-                    objects.add(new PacGum(xx * cellSize, yy * cellSize));
+                    StaticEntity pg = new PacGum(xx * cellSize, yy * cellSize);
+                    objects.add(pg);
+                    gumGrid[yy][xx]= pg;
                 }else if (dataChar.equals("o")) { //Création des SuperPacGums
-                    objects.add(new SuperPacGum(xx * cellSize, yy * cellSize));
+                    StaticEntity spg = new SuperPacGum(xx * cellSize, yy * cellSize);
+                    objects.add(spg);
+                    gumGrid[yy][xx]= spg;
                 }else if (dataChar.equals("-")) { //Création des murs de la maison des fantômes
                     objects.add(new GhostHouse(xx * cellSize, yy * cellSize));
                 }
@@ -234,6 +240,16 @@ public class Game implements Observer, GameMediator {
             }
             else if (event == GameEvent.GHOST_ARRIVED_HOME) {
                 if (!isAnyGhostInState(EatenMode.class)) soundManager.stopEatenLoop();
+            }
+            else if (event == GameEvent.GHOST_MOVED_TO_TILE) {
+                Ghost gh = (Ghost) colleague;
+                int x_pos = gh.getxPos(), y_pos = gh.getyPos();
+                StaticEntity gum = gumGrid[(y_pos/cellSize + 1)%gumGrid.length][(x_pos/cellSize + 1)%gumGrid[0].length];
+                if (gh instanceof Pinky) {
+                    if (gum != null) {
+                        gum.revive();
+                    }
+                }
             }
         }
 
