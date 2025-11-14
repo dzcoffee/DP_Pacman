@@ -8,6 +8,8 @@ import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
 import game.ghostStates.GhostState;
+import game.level.FrightenAllCommand;
+import game.level.LevelManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
@@ -17,6 +19,8 @@ import java.awt.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 //Classe gérant le jeu en lui même
 public class Game implements Observer, GameMediator {
@@ -39,6 +43,8 @@ public class Game implements Observer, GameMediator {
         }
         return false;
     }
+
+    private final LevelManager levelManager;
 
     public Game(){
         //Initialisation du jeu
@@ -111,6 +117,27 @@ public class Game implements Observer, GameMediator {
                 walls.add((Wall) o);
             }
         }
+
+
+        //Level Manager
+        levelManager = new LevelManager(new FrightenAllCommand(this));
+        registerLevelManager();
+
+    }
+
+    // 레벨매니저 구독
+    private void registerLevelManager(){
+        levelManager.registerObserver(pacman);
+        for(Ghost ghost : ghosts){
+            levelManager.registerObserver(ghost);
+        }
+
+    }
+
+    public void eatGhostAll(){
+        for(Ghost ghost : ghosts){
+            ghost.getState().eaten();
+        }
     }
 
     public static List<Wall> getWalls() {
@@ -167,8 +194,21 @@ public class Game implements Observer, GameMediator {
         if (gh.getState() instanceof FrightenedMode) {
             gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
         }else if (!(gh.getState() instanceof EatenMode)) {
-            System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
-            System.exit(0); //TODO
+            // 게임 life 검사 로직 추가
+            levelManager.decreasePacmanLife();
+            int pacmanLife = levelManager.getPacmanLife();
+
+            if(pacmanLife > 0){
+                gh.getState().eaten();
+            }
+            else{
+                //게임 종료 로직
+                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
+                System.exit(0); //TODO
+            }
+
+
+
         }
     }
 
