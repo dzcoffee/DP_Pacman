@@ -8,6 +8,8 @@ import game.entities.ghosts.Pinky;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
+import game.keyInputManager.DummyLevelUIPannel;
+import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
 import game.level.FrightenAllCommand;
 import game.level.LevelManager;
@@ -48,6 +50,8 @@ public class Game implements Observer, GameMediator {
     }
 
     private final LevelManager levelManager;
+
+    private final KeyInputManager keyInputManager;
 
     public Game(){
         //Initialisation du jeu
@@ -124,6 +128,8 @@ public class Game implements Observer, GameMediator {
             }
         }
 
+        //Todo 나중에 지우기 keyInputManager Setting
+        keyInputManager = new KeyInputManager(pacman, new DummyLevelUIPannel());
 
         //Level Manager
         levelManager = new LevelManager(new FrightenAllCommand(this));
@@ -163,7 +169,7 @@ public class Game implements Observer, GameMediator {
 
     //Gestion des inputs
     public void input(KeyHandler k) {
-        pacman.input(k);
+        keyInputManager.input(k);
     }
 
     //Rendu de toutes les entités
