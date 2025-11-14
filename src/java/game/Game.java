@@ -244,7 +244,7 @@ public class Game implements Observer, GameMediator {
             else if (event == GameEvent.GHOST_MOVED_TO_TILE) {
                 Ghost gh = (Ghost) colleague;
                 int x_pos = gh.getxPos(), y_pos = gh.getyPos();
-                StaticEntity gum = gumGrid[y_pos/cellSize + 1][x_pos/cellSize + 1];
+                StaticEntity gum = gumGrid[(y_pos/cellSize + 1)%gumGrid.length][(x_pos/cellSize + 1)%gumGrid[0].length];
                 if (gh instanceof Pinky) {
                     if (gum != null) {
                         gum.revive();
