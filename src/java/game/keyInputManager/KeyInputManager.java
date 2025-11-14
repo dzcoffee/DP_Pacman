@@ -2,9 +2,9 @@ package game.keyInputManager;
 
 import game.entities.Pacman;
 import game.keyInputManager.command.InputCommand;
-import game.keyInputManager.command.LevelInputInputCommand;
+import game.keyInputManager.command.LevelInputCommand;
 import game.keyInputManager.command.NoInputCommand;
-import game.keyInputManager.command.PacmanInputInputCommand;
+import game.keyInputManager.command.PacmanInputCommand;
 import game.utils.KeyHandler;
 
 public class KeyInputManager {
@@ -13,17 +13,17 @@ public class KeyInputManager {
 
     private final GameState playState;
     private final GameState pauseState;
-    private InputCommand pacmanInputInputCommand = new NoInputCommand();
-    private InputCommand levelInputInputCommand = new NoInputCommand();
+    private InputCommand pacmanInputCommand = new NoInputCommand();
+    private InputCommand levelInputCommand = new NoInputCommand();
 
     public KeyInputManager(Pacman pacman, DummyLevelUIPannel levelUIPannel) {
         playState = new PlayState();
         pauseState = new PauseState();
         gameState = playState;
 
-        pacmanInputInputCommand = new PacmanInputInputCommand(pacman);
-        levelInputInputCommand = new LevelInputInputCommand(levelUIPannel);
-        inputCommand = pacmanInputInputCommand;
+        pacmanInputCommand = new PacmanInputCommand(pacman);
+        levelInputCommand = new LevelInputCommand(levelUIPannel);
+        inputCommand = pacmanInputCommand;
     }
 
 
@@ -31,11 +31,11 @@ public class KeyInputManager {
 
     public void switchPlayState() {
         gameState = playState;
-        inputCommand = pacmanInputInputCommand;
+        inputCommand = pacmanInputCommand;
     }
     public void switchPauseState() {
         gameState = pauseState;
-        inputCommand = levelInputInputCommand;
+        inputCommand = levelInputCommand;
     }
 
     public void input(KeyHandler k) {
