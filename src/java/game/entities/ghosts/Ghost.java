@@ -158,7 +158,9 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
             if (newTileX >= 0 && newTileY >= 0 && (newTileX != currentTileX || newTileY != currentTileY)) {
                     this.currentTileX = newTileX;
                     this.currentTileY = newTileY;
-                    gameMediator.notify(this, GameEvent.GHOST_MOVED_TO_TILE);
+                    if (gameMediator != null) {
+                        gameMediator.notify(this, GameEvent.GHOST_MOVED_TO_TILE);
+                    }
             }
         }
 
