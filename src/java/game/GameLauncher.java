@@ -1,5 +1,6 @@
 package game;
 
+import game.keyInputManager.KeyInputManager;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.io.IOException;
 public class GameLauncher {
     private static UIPanel uiPanel;
     private static LevelUIPanel levelUIPanel;
+    private static GameplayPanel gameplayPanel;
+    private static KeyInputManager keyInputManager;
 
     public static void main(String[] args) {
         JFrame window = new JFrame();
@@ -18,7 +21,8 @@ public class GameLauncher {
 
         //Création de la "zone de jeu"
         try {
-            gameWindow.add(new GameplayPanel(448,496));
+            gameplayPanel = new GameplayPanel(448,496);
+            gameWindow.add(gameplayPanel);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,6 +46,10 @@ public class GameLauncher {
         gbc.gridy = 1;      // 두번째 줄에 위치
         gbc.weighty = 0.8;
         uiContainer.add(levelUIPanel, gbc);
+
+        //keyInputManager 초기화
+        keyInputManager = new KeyInputManager(gameplayPanel, levelUIPanel);
+        gameplayPanel.setKeyInputManager(keyInputManager);
 
         // 4. UI 컨테이너를 gameWindow의 우측(EAST)에 추가
         gameWindow.add(uiContainer);

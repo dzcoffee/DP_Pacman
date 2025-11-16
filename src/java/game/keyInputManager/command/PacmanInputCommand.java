@@ -1,14 +1,15 @@
 package game.keyInputManager.command;
 
+import game.GameplayPanel;
 import game.entities.Pacman;
 import game.utils.KeyHandler;
 
 public class PacmanInputCommand implements InputCommand {
 
-    private final Pacman target;
+    private final GameplayPanel target;
 
-    public PacmanInputCommand(Pacman pacman) {
-        this.target = pacman;
+    public PacmanInputCommand(GameplayPanel gameplayPanel) {
+        this.target = gameplayPanel;
     }
 
     @Override
