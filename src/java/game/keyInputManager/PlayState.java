@@ -9,8 +9,8 @@ public class PlayState extends GameState {
 
     private PacmanInputCommand pacmanInputCommand;
 
-    public PlayState(GameplayPanel gameplayPanel) {
-        pacmanInputCommand = new PacmanInputCommand(gameplayPanel);
+    public PlayState(Pacman pacman) {
+        pacmanInputCommand = new PacmanInputCommand(pacman);
     }
 
     @Override

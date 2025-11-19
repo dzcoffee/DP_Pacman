@@ -16,8 +16,8 @@ public class KeyInputManager {
     private final GameState pauseState;
 
 
-    public KeyInputManager(GameplayPanel gameplayPanel, LevelUIPanel levelUIPannel) {
-        playState = new PlayState(gameplayPanel);
+    public KeyInputManager(Pacman pacman, LevelUIPanel levelUIPannel) {
+        playState = new PlayState(pacman);
         pauseState = new PauseState(levelUIPannel);
         gameState = playState;
 

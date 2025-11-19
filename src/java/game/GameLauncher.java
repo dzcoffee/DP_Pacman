@@ -47,10 +47,6 @@ public class GameLauncher {
         gbc.weighty = 0.8;
         uiContainer.add(levelUIPanel, gbc);
 
-        //keyInputManager 초기화
-        keyInputManager = new KeyInputManager(gameplayPanel, levelUIPanel);
-        gameplayPanel.setKeyInputManager(keyInputManager);
-
         // 4. UI 컨테이너를 gameWindow의 우측(EAST)에 추가
         gameWindow.add(uiContainer);
 

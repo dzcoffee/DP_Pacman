@@ -6,10 +6,10 @@ import game.utils.KeyHandler;
 
 public class PacmanInputCommand implements InputCommand {
 
-    private final GameplayPanel target;
+    private final Pacman target;
 
-    public PacmanInputCommand(GameplayPanel gameplayPanel) {
-        this.target = gameplayPanel;
+    public PacmanInputCommand(Pacman pacman) {
+        this.target = pacman;
     }
 
     @Override

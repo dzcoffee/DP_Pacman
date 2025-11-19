@@ -9,6 +9,7 @@ import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
 import game.ghostStates.GhostState;
+import game.keyInputManager.KeyInputManager;
 import game.level.FrightenAllCommand;
 import game.level.LevelManager;
 import game.utils.CollisionDetector;
@@ -37,6 +38,8 @@ public class Game implements Observer, GameMediator {
     private static boolean firstInput = false;
     private StaticEntity[][] gumGrid;
     private int cellSize = 8;
+
+    private final KeyInputManager keyInputManager;
 
     private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
         for(Ghost gh: ghosts) {
@@ -127,6 +130,7 @@ public class Game implements Observer, GameMediator {
         //Level Manager
         levelManager = new LevelManager(new FrightenAllCommand(this));
         registerLevelManager();
+        keyInputManager = new KeyInputManager(pacman, GameLauncher.getLevelUIPanel());
 
     }
 
@@ -162,7 +166,7 @@ public class Game implements Observer, GameMediator {
 
     //Gestion des inputs
     public void input(KeyHandler k) {
-        pacman.input(k);
+        keyInputManager.input(k);
     }
 
     //Rendu de toutes les entités

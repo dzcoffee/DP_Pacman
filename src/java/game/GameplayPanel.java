@@ -25,8 +25,6 @@ public class GameplayPanel extends JPanel implements Runnable {
 
     private Game game;
 
-    private static KeyInputManager keyInputManager;
-
     public GameplayPanel(int width, int height) throws IOException {
         this.width = width;
         this.height = height;
@@ -61,8 +59,6 @@ public class GameplayPanel extends JPanel implements Runnable {
     public void update() {
         game.update();
     }
-
-    public void setKeyInputManager(KeyInputManager keyInputManager) {GameplayPanel.keyInputManager = keyInputManager;}
 
     //gestion des inputs
     public void input(KeyHandler key) {
@@ -108,7 +104,7 @@ public class GameplayPanel extends JPanel implements Runnable {
             double now = System.nanoTime();
             int updateCount = 0;
             while ((now - lastUpdateTime) > TBU && (updateCount < MUBR)) {
-                keyInputManager.input(key);
+                input(key);
                 update();
                 lastUpdateTime += TBU;
                 updateCount++;
