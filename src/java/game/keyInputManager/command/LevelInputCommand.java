@@ -1,13 +1,13 @@
 package game.keyInputManager.command;
 
-import game.keyInputManager.DummyLevelUIPannel;
+import game.LevelUIPanel;
 import game.utils.KeyHandler;
 
 public class LevelInputCommand implements InputCommand {
 
-    private final DummyLevelUIPannel target;
+    private final LevelUIPanel target;
 
-    public LevelInputCommand(DummyLevelUIPannel levelUIPannel) {
+    public LevelInputCommand(LevelUIPanel levelUIPannel) {
         this.target = levelUIPannel;
     }
 

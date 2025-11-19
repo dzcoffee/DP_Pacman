@@ -129,7 +129,7 @@ public class Game implements Observer, GameMediator {
         }
 
         //Todo 나중에 지우기 keyInputManager Setting
-        keyInputManager = new KeyInputManager(pacman, new DummyLevelUIPannel());
+        keyInputManager = new KeyInputManager(pacman, GameLauncher.getLevelUIPanel());
 
         //Level Manager
         levelManager = new LevelManager(new FrightenAllCommand(this));

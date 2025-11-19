@@ -1,13 +1,18 @@
 package game;
 
+import game.level.GameLevelData;
+import game.level.ILevelDataObserver;
+import game.utils.KeyHandler;
+
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 //TODO Merge이후 ILevelDataObserver를 implements하도록 구현하여야 함
-public class LevelUIPanel extends JPanel {
+public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     public static int width;
     public static int height;
 
@@ -26,6 +31,15 @@ public class LevelUIPanel extends JPanel {
             "GHOST LIFE UP",
             "ALL GHOST EATEN STATE"
     };
+
+    @Override
+    public void update(GameLevelData data) {
+
+    }
+
+    public void input(KeyHandler k){
+
+    }
 
     public LevelUIPanel(int width, int height) {
         this.width = width;
