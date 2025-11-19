@@ -2,6 +2,7 @@ package game;
 
 import game.level.GameLevelData;
 import game.level.ILevelDataObserver;
+import game.level.LevelManager;
 import game.utils.KeyHandler;
 
 import javax.swing.*;
@@ -18,6 +19,8 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private int level = 1;
     private JLabel levelLabel;
 
+    private LevelManager levelManager;
+
     private boolean nowVisible;
 
     //레벨업 이후 옵션 변수들
@@ -29,7 +32,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private final String[] OPTION_NAMES = {
             "PACMAN SPEED UP",
             "GHOST SPEED DOWN",
-            "GHOST LIFE UP",
+            "PACMAN LIFE UP",
             "ALL GHOST EATEN STATE"
     };
 
@@ -38,6 +41,10 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     @Override
     public void update(GameLevelData data) {
         showLevelUpMenu(!nowVisible);
+    }
+
+    public void setLevelManager(LevelManager levelManager) {
+        this.levelManager = levelManager;
     }
 
     public void input(KeyHandler k){
@@ -65,7 +72,20 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private void executeSelectedOption(){
         switch (currentSelectionIndex){
             case 0:
+                levelManager.increaseGhostSpeed();
+                break;
+            case 1:
+                levelManager.decreaseGhostSpeed();
+                break;
+            case 2:
+                levelManager.increasePacmanLife();
+                break;
+            case 3:
+                levelManager.frightenAll();
+                break;
         }
+
+
     }
 
     public LevelUIPanel(int width, int height) {
