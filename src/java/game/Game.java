@@ -8,7 +8,6 @@ import game.entities.ghosts.Pinky;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
-import game.keyInputManager.DummyLevelUIPannel;
 import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
 import game.level.FrightenAllCommand;
@@ -83,9 +82,9 @@ public class Game implements Observer, GameMediator {
                     pacman.setCollisionDetector(collisionDetector);
 
                     //Enregistrement des différents observers de Pacman
-                    pacman.registerObserver(GameLauncher.getUIPanel());
-                    pacman.registerObserver(this);
+//                    pacman.registerObserver(GameLauncher.getUIPanel());
                     pacman.registerObserver(scoreManager);
+                    pacman.registerObserver(this);
                 }else if (dataChar.equals("b") || dataChar.equals("p") || dataChar.equals("i") || dataChar.equals("c")) { //Création des fantômes en utilisant les différentes factories
                     switch (dataChar) {
                         case "b":
@@ -130,12 +129,13 @@ public class Game implements Observer, GameMediator {
             }
         }
 
-        //Todo 나중에 지우기 keyInputManager Setting
-        keyInputManager = new KeyInputManager(pacman, new DummyLevelUIPannel());
+        keyInputManager = new KeyInputManager(pacman, GameLauncher.getLevelUIPanel());
 
         //Level Manager
         levelManager = new LevelManager(new FrightenAllCommand(this));
         registerLevelManager();
+        registerScoreManager();
+        GameLauncher.addLevelMangerInLevelUIPanel(levelManager);
 
     }
 
@@ -146,6 +146,11 @@ public class Game implements Observer, GameMediator {
             levelManager.registerObserver(ghost);
         }
 
+    }
+
+    private void registerScoreManager(){
+        scoreManager.registerObserver(keyInputManager);
+        scoreManager.setUIPanel(GameLauncher.getUIPanel());
     }
 
     public void eatGhostAll(){
@@ -217,7 +222,7 @@ public class Game implements Observer, GameMediator {
             }
             else{
                 //게임 종료 로직
-                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
+//                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
                 System.exit(0); //TODO
             }
 

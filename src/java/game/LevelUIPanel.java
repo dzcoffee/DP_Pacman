@@ -39,7 +39,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     //update를 받게 되면 LevelUI의 상태를 변경(아마 그런 용도로 작성하신 게 아닐까?)
     // 그럼 얘가 LevelManager라는 Observer에게 명령을 내리면서도 구독중이라 상태가 변하는? 구조? 이게 맞는지
     @Override
-    public void update(GameLevelData data) {
+    public void updateLevelData(GameLevelData data) {
         showLevelUpMenu(!nowVisible);
     }
 
