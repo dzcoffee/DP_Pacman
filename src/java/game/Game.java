@@ -12,6 +12,7 @@ import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
 import game.level.FrightenAllCommand;
 import game.level.LevelManager;
+import game.score.ScoreManager;
 import game.utils.CollisionDetector;
 import game.utils.CsvReader;
 import game.utils.KeyHandler;
@@ -49,7 +50,7 @@ public class Game implements Observer, GameMediator {
     }
 
     private final LevelManager levelManager;
-
+    private final ScoreManager scoreManager;
     private final KeyInputManager keyInputManager;
 
     public Game(){
@@ -69,9 +70,7 @@ public class Game implements Observer, GameMediator {
         AbstractGhostFactory abstractGhostFactory = null;
         this.soundManager = new SoundManager();
         soundManager.gameStart();
-
-
-
+        scoreManager = new ScoreManager();
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
             for(int yy = 0 ; yy < cellsPerColumn ; yy++) {
@@ -83,7 +82,8 @@ public class Game implements Observer, GameMediator {
                     pacman.setCollisionDetector(collisionDetector);
 
                     //Enregistrement des différents observers de Pacman
-                    pacman.registerObserver(GameLauncher.getUIPanel());
+//                    pacman.registerObserver(GameLauncher.getUIPanel());
+                    pacman.registerObserver(scoreManager);
                     pacman.registerObserver(this);
                 }else if (dataChar.equals("b") || dataChar.equals("p") || dataChar.equals("i") || dataChar.equals("c")) { //Création des fantômes en utilisant les différentes factories
                     switch (dataChar) {
@@ -129,13 +129,12 @@ public class Game implements Observer, GameMediator {
             }
         }
 
-        //Todo 나중에 지우기 keyInputManager Setting
         keyInputManager = new KeyInputManager(pacman, GameLauncher.getLevelUIPanel());
 
         //Level Manager
         levelManager = new LevelManager(new FrightenAllCommand(this));
         registerLevelManager();
-
+        registerScoreManager();
         GameLauncher.addLevelMangerInLevelUIPanel(levelManager);
 
     }
@@ -147,6 +146,11 @@ public class Game implements Observer, GameMediator {
             levelManager.registerObserver(ghost);
         }
 
+    }
+
+    private void registerScoreManager(){
+        scoreManager.registerObserver(keyInputManager);
+        scoreManager.setUIPanel(GameLauncher.getUIPanel());
     }
 
     public void eatGhostAll(){
@@ -218,7 +222,7 @@ public class Game implements Observer, GameMediator {
             }
             else{
                 //게임 종료 로직
-                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
+//                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
                 System.exit(0); //TODO
             }
 
@@ -262,6 +266,6 @@ public class Game implements Observer, GameMediator {
             }
         }
 
-        
+
     }
 }
