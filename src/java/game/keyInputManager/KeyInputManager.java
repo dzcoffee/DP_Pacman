@@ -33,15 +33,14 @@ public class KeyInputManager implements ILevelUpEventObserver {
         gameState.getInput(k);
     }
 
-
-    //TODO : pauseGame 구현 이후 주석 없애기
+    
     @Override
     public void updateLevelUpEvent() {
-//        switchPauseState();
+        switchPauseState();
     }
 
     @Override
     public void updateLevelUpEnd() {
-//        switchPlayState();
+        switchPlayState();
     }
 }
