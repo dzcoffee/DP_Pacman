@@ -35,6 +35,7 @@ public class Game implements Observer, GameMediator {
     private static Blinky blinky;
 
     private SoundManager soundManager;
+    private volatile boolean paused = false;
     private static boolean firstInput = false;
     private StaticEntity[][] gumGrid;
     private int cellSize = 8;
@@ -165,6 +166,7 @@ public class Game implements Observer, GameMediator {
 
     //Mise à jour de toutes les entités
     public void update() {
+        if (paused) return;
         for (Entity o: objects) {
             if (!o.isDestroyed()) o.update();
         }
@@ -263,5 +265,12 @@ public class Game implements Observer, GameMediator {
         }
 
         
+    }
+
+    public void updateLevelUpEvent() {
+        paused = true;
+    }
+    public void updateLevelUpEnd() {
+        paused = false;
     }
 }
