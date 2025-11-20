@@ -10,6 +10,7 @@ import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
 import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
+import game.keyInputManager.KeyInputManager;
 import game.level.FrightenAllCommand;
 import game.level.LevelManager;
 import game.score.ScoreManager;
@@ -39,6 +40,8 @@ public class Game implements Observer, GameMediator {
     private static boolean firstInput = false;
     private StaticEntity[][] gumGrid;
     private int cellSize = 8;
+
+    private final KeyInputManager keyInputManager;
 
     private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
         for(Ghost gh: ghosts) {

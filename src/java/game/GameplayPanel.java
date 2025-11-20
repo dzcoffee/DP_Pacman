@@ -1,7 +1,9 @@
 package game;
 
+import game.keyInputManager.KeyInputManager;
 import game.utils.KeyHandler;
 
+import game.utils.KeyHandler.Key;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;

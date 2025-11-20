@@ -10,6 +10,7 @@ import java.io.IOException;
 public class GameLauncher {
     private static UIPanel uiPanel;
     private static LevelUIPanel levelUIPanel;
+    private static GameplayPanel gameplayPanel;
 
     public static void main(String[] args) {
         JFrame window = new JFrame();
@@ -20,7 +21,8 @@ public class GameLauncher {
 
         //Création de la "zone de jeu"
         try {
-            gameWindow.add(new GameplayPanel(448,496));
+            gameplayPanel = new GameplayPanel(448,496);
+            gameWindow.add(gameplayPanel);
         } catch (IOException e) {
             e.printStackTrace();
         }

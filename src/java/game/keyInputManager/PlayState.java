@@ -1,5 +1,6 @@
 package game.keyInputManager;
 
+import game.GameplayPanel;
 import game.entities.Pacman;
 import game.keyInputManager.command.PacmanInputCommand;
 import game.utils.KeyHandler;
