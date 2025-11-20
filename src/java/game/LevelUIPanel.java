@@ -27,6 +27,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private JPanel optionsPanel;       // 4개의 옵션을 담을 컨테이너
     private JPanel[] optionItems;      // 개별 옵션 패널 (배경색 변경용)
     private JLabel[] optionTexts;      // 개별 옵션 텍스트
+    private JPanel operationPanel;
     private int currentSelectionIndex = 0; // 현재 선택된 옵션 (0~3)
 
     private final String[] OPTION_NAMES = {
@@ -119,13 +120,25 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
         optionsPanel.setBackground(Color.BLACK);
         optionsPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10)); // 전체 여백
 
+        operationPanel = new JPanel();
+        operationPanel.setLayout(new BorderLayout());
+        operationPanel.setBackground(Color.BLACK);
+        operationPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10)); // 전체 여백
+
+
         JLabel selectLabel = new JLabel("Select Level Option!", SwingConstants.CENTER);
         selectLabel.setFont(new Font("Monospaced", Font.BOLD, 18));
         selectLabel.setForeground(Color.CYAN); // 안내 문구는 눈에 띄는 색상(Cyan)
         selectLabel.setBorder(new EmptyBorder(0, 0, 20, 0)); // 옵션들과의 간격 20px
         optionsPanel.add(selectLabel, BorderLayout.NORTH);
 
-        JPanel optionsGrid = new JPanel(new GridLayout(4, 1, 0, 5)); // 4행 1열, 칸 사이 간격 15px
+        JLabel applyWithEnterLabel = new JLabel("Press Enter for applying!!", SwingConstants.CENTER);
+        applyWithEnterLabel.setFont(new Font("Monospaced", Font.BOLD, 16));
+        applyWithEnterLabel.setForeground(Color.CYAN); // 안내 문구는 눈에 띄는 색상(Cyan)
+        applyWithEnterLabel.setBorder(new EmptyBorder(0, 0, 20, 0)); // 옵션들과의 간격 20px
+        operationPanel.add(applyWithEnterLabel, BorderLayout.NORTH);
+
+        JPanel optionsGrid = new JPanel(new GridLayout(5, 1, 0, 5)); // 4행 1열, 칸 사이 간격 15px
         optionsGrid.setBackground(Color.BLACK);
 
         optionItems = new JPanel[4];
@@ -150,11 +163,23 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
             optionsGrid.add(optionItems[i]);
         }
 
-        optionsPanel.add(optionsGrid, BorderLayout.CENTER);
+        JPanel centerWrap = new JPanel(new BorderLayout());
+        centerWrap.setBackground(Color.BLACK);
+
+        // 버튼들을 위쪽(NORTH)에 붙여서 높이가 늘어나는 것을 방지
+        centerWrap.add(optionsGrid, BorderLayout.NORTH);
+        // 안내 문구를 그 바로 아래(CENTER)에 배치
+        centerWrap.add(operationPanel, BorderLayout.CENTER);
+
+        // [5] 묶은 패널을 optionsPanel의 중앙에 배치
+        optionsPanel.add(centerWrap, BorderLayout.CENTER);
 
         // 초기에는 숨김 처리
         optionsPanel.setVisible(false);
+        operationPanel.setVisible(false);
+
         this.add(optionsPanel, BorderLayout.CENTER);
+        this.add(operationPanel, BorderLayout.SOUTH);
 
         showLevelUpMenu(true);
         //TODO 테스트 용으로 임시로 작성함 이후 연결 시에는 주석처리 필요
@@ -165,9 +190,10 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     // show = false -> 안 보이게 설정
     public void showLevelUpMenu(boolean show) {
         optionsPanel.setVisible(show);
+        operationPanel.setVisible(show);
         nowVisible = show;
         if (show) {
-            currentSelectionIndex = 0;
+            currentSelectionIndex = 3;
             updateSelectionVisual();
         }
         revalidate();
