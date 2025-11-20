@@ -1,6 +1,5 @@
 package game;
 
-import game.keyInputManager.KeyInputManager;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -10,7 +9,6 @@ public class GameLauncher {
     private static UIPanel uiPanel;
     private static LevelUIPanel levelUIPanel;
     private static GameplayPanel gameplayPanel;
-    private static KeyInputManager keyInputManager;
 
     public static void main(String[] args) {
         JFrame window = new JFrame();
