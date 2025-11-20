@@ -117,7 +117,7 @@ public class Pacman extends MovingEntity implements Sujet, ILevelDataObserver {
     }
 
     @Override
-    public void update(GameLevelData data) {
+    public void updateLevelData(GameLevelData data) {
         spdMultiplier = data.getPacmanSpeed();
     }
 }

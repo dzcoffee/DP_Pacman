@@ -1,7 +1,5 @@
 package game.level;
 
-import game.Game;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +68,7 @@ public class LevelManager implements ILevelDataSubject {
 
     @Override
     public void notify(GameLevelData data) {
-        observerCollection.forEach(o -> o.update(data));
+        observerCollection.forEach(o -> o.updateLevelData(data));
     }
 
 }

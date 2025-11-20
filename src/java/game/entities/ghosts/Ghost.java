@@ -79,7 +79,7 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
 
     public void switchFrightenedMode() {
         frightenedTimer = 0;
-        state = frightenedMode;                
+        state = frightenedMode;
         if (gameMediator != null) {
             gameMediator.notify(this, GameEvent.GHOST_STATE_CHANGED_TO_FRIGHTENED);
         }
@@ -150,7 +150,7 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
 
             if ((isChasing && modeTimer >= (60 * chaseTimerInterval)) || (!isChasing && modeTimer >= (60 * scatterTimerInterval))) {
                 state.timerModeOver();
-                isChasing = !isChasing;        
+                isChasing = !isChasing;
             }
             int cellSize = 8;
             int newTileX = xPos / cellSize;
@@ -197,7 +197,7 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     }
 
     @Override
-    public void update(GameLevelData data) {
+    public void updateLevelData(GameLevelData data) {
         spdMultiplier = data.getGhostSpeed();
     }
 }
