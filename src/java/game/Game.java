@@ -11,6 +11,7 @@ import game.ghostStates.FrightenedMode;
 import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
 import game.level.FrightenAllCommand;
+import game.level.ILevelUpEventObserver;
 import game.level.LevelManager;
 import game.score.ScoreManager;
 import game.utils.CollisionDetector;
@@ -26,7 +27,7 @@ import java.util.List;
 
 
 //Classe gérant le jeu en lui même
-public class Game implements Observer, GameMediator {
+public class Game implements Observer, ILevelUpEventObserver, GameMediator {
     //Pour lister les différentes entités présentes sur la fenêtre
     private List<Entity> objects = new ArrayList();
     private List<Ghost> ghosts = new ArrayList();
@@ -151,6 +152,7 @@ public class Game implements Observer, GameMediator {
     }
 
     private void registerScoreManager(){
+        scoreManager.registerObserver(this);
         scoreManager.registerObserver(keyInputManager);
         scoreManager.setUIPanel(GameLauncher.getUIPanel());
     }
@@ -272,9 +274,12 @@ public class Game implements Observer, GameMediator {
 
     }
 
+    @Override
     public void updateLevelUpEvent() {
+        System.out.println("updateLevelUpEvent");
         paused = true;
     }
+    @Override
     public void updateLevelUpEnd() {
         paused = false;
     }
