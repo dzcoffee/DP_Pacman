@@ -31,6 +31,9 @@ public class KeyHandler implements KeyListener {
     public Key k_left = new Key();
     public Key k_right = new Key();
 
+    public Key k_enter = new Key();
+    // 옵션 확인용 Enter 키 추가
+
     public KeyHandler(GameplayPanel game) {
         game.addKeyListener(this);
     }
@@ -47,6 +50,9 @@ public class KeyHandler implements KeyListener {
         }
         if (e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
             k_down.toggle(pressed);
+        }
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            k_enter.toggle(pressed);
         }
     }
 
