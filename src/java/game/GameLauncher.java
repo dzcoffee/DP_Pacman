@@ -1,5 +1,7 @@
 package game;
 
+import game.level.LevelManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -26,7 +28,7 @@ public class GameLauncher {
         }
 
         JPanel uiContainer = new JPanel(new GridBagLayout());
-        uiContainer.setPreferredSize(new Dimension(256, 496)); // 전체 UI 영역 크기는 기존과 같게
+        uiContainer.setPreferredSize(new Dimension(320, 496)); // 전체 UI 영역 크기는 기존과 같게
         uiContainer.setBackground(Color.BLACK); //UI 백그라운드는 검게
         GridBagConstraints gbc = new GridBagConstraints();
 
@@ -34,13 +36,13 @@ public class GameLauncher {
         gbc.weightx = 1.0;
         gbc.gridx = 0;
 
-        uiPanel = new UIPanel(256, 496);
+        uiPanel = new UIPanel(288, 496);
         uiPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         gbc.gridy = 0;      // 첫 번째 줄에 위치
         gbc.weighty = 0.2;
         uiContainer.add(uiPanel, gbc);
 
-        levelUIPanel = new LevelUIPanel(256, 496);
+        levelUIPanel = new LevelUIPanel(288, 496);
         gbc.gridy = 1;      // 두번째 줄에 위치
         gbc.weighty = 0.8;
         uiContainer.add(levelUIPanel, gbc);
@@ -61,5 +63,9 @@ public class GameLauncher {
 
     public static LevelUIPanel getLevelUIPanel() {
         return levelUIPanel;
+    }
+
+    public static void addLevelMangerInLevelUIPanel(LevelManager levelManager) {
+        levelUIPanel.setLevelManager(levelManager);
     }
 }
