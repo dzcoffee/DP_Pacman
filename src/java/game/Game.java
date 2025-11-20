@@ -276,7 +276,6 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
     @Override
     public void updateLevelUpEvent() {
-        System.out.println("updateLevelUpEvent");
         paused = true;
     }
     @Override
