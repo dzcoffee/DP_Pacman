@@ -1,5 +1,10 @@
 package game;
 
+import game.level.GameLevelData;
+import game.level.ILevelDataObserver;
+import game.level.LevelManager;
+import game.utils.KeyHandler;
+
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -7,12 +12,16 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 //TODO Merge이후 ILevelDataObserver를 implements하도록 구현하여야 함
-public class LevelUIPanel extends JPanel {
+public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     public static int width;
     public static int height;
 
     private int level = 1;
     private JLabel levelLabel;
+
+    private LevelManager levelManager;
+
+    private boolean nowVisible;
 
     //레벨업 이후 옵션 변수들
     private JPanel optionsPanel;       // 4개의 옵션을 담을 컨테이너
@@ -24,9 +33,61 @@ public class LevelUIPanel extends JPanel {
     private final String[] OPTION_NAMES = {
             "PACMAN SPEED UP",
             "GHOST SPEED DOWN",
-            "GHOST LIFE UP",
+            "PACMAN LIFE UP",
             "ALL GHOST EATEN STATE"
     };
+
+    //update를 받게 되면 LevelUI의 상태를 변경(아마 그런 용도로 작성하신 게 아닐까?)
+    // 그럼 얘가 LevelManager라는 Observer에게 명령을 내리면서도 구독중이라 상태가 변하는? 구조? 이게 맞는지
+    @Override
+    public void update(GameLevelData data) {
+        showLevelUpMenu(!nowVisible);
+    }
+
+    public void setLevelManager(LevelManager levelManager) {
+        this.levelManager = levelManager;
+    }
+
+    public void input(KeyHandler k){
+        if (!optionsPanel.isVisible()) return;
+
+        if (k.k_up.isPressed) {
+            changeSelection(-1);
+
+            k.k_up.isPressed = false;
+        }
+
+        else if (k.k_down.isPressed) {
+            changeSelection(1);
+
+            k.k_down.isPressed = false;
+        }
+
+        else if (k.k_enter.isPressed) {
+            executeSelectedOption(); // 선택된 옵션 실행
+
+            k.k_enter.isPressed = false;
+        }
+    }
+
+    private void executeSelectedOption(){
+        switch (currentSelectionIndex){
+            case 0:
+                levelManager.increaseGhostSpeed();
+                break;
+            case 1:
+                levelManager.decreaseGhostSpeed();
+                break;
+            case 2:
+                levelManager.increasePacmanLife();
+                break;
+            case 3:
+                levelManager.frightenAll();
+                break;
+        }
+
+
+    }
 
     public LevelUIPanel(int width, int height) {
         this.width = width;
@@ -38,6 +99,8 @@ public class LevelUIPanel extends JPanel {
         levelLabel.setForeground(Color.white);
 
         this.add(levelLabel, BorderLayout.NORTH);
+
+        nowVisible = false;
 
         initOptionsPanel();
     }
@@ -128,6 +191,7 @@ public class LevelUIPanel extends JPanel {
     public void showLevelUpMenu(boolean show) {
         optionsPanel.setVisible(show);
         operationPanel.setVisible(show);
+        nowVisible = show;
         if (show) {
             currentSelectionIndex = 3;
             updateSelectionVisual();
@@ -174,16 +238,7 @@ public class LevelUIPanel extends JPanel {
         }
     }
 
-
-
     //TODO get메서드는 Encapsulation 위배로 사용하지 않는 게 좋으나 일단 UIPanel과 유사하게 구성하기 위해 작성
     public int getLevel() {return this.level;}
-
-    //TODO Observer 패턴 연결 이후 update 코드 작성
-//    @Override
-//    public void update(GameLevelData data){
-//        //내부 로직 작성 필요
-//    }
-
 
 }

@@ -1,5 +1,7 @@
 package game;
 
+import game.level.LevelManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -59,5 +61,9 @@ public class GameLauncher {
 
     public static LevelUIPanel getLevelUIPanel() {
         return levelUIPanel;
+    }
+
+    public static void addLevelMangerInLevelUIPanel(LevelManager levelManager) {
+        levelUIPanel.setLevelManager(levelManager);
     }
 }

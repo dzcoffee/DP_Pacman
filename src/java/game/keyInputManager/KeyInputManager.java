@@ -1,5 +1,6 @@
 package game.keyInputManager;
 
+import game.LevelUIPanel;
 import game.entities.Pacman;
 import game.keyInputManager.command.InputCommand;
 import game.keyInputManager.command.LevelInputCommand;
@@ -14,7 +15,7 @@ public class KeyInputManager {
     private final GameState pauseState;
 
 
-    public KeyInputManager(Pacman pacman, DummyLevelUIPannel levelUIPannel) {
+    public KeyInputManager(Pacman pacman, LevelUIPanel levelUIPannel) {
         playState = new PlayState(pacman);
         pauseState = new PauseState(levelUIPannel);
         gameState = playState;
