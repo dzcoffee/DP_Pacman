@@ -10,7 +10,6 @@ import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
 import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
-import game.keyInputManager.KeyInputManager;
 import game.level.FrightenAllCommand;
 import game.level.LevelManager;
 import game.score.ScoreManager;
@@ -54,7 +53,6 @@ public class Game implements Observer, GameMediator {
 
     private final LevelManager levelManager;
     private final ScoreManager scoreManager;
-    private final KeyInputManager keyInputManager;
 
     public Game(){
         //Initialisation du jeu

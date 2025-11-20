@@ -32,9 +32,6 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private JPanel operationPanel;
     private int currentSelectionIndex = 0; // 현재 선택된 옵션 (0~3)
 
-    private boolean prevUp, prevDown, prevLeft, prevRight; //꾹 눌러도 한번만 반영
-
-
     private final String[] OPTION_NAMES = {
             "PACMAN SPEED UP",
             "GHOST SPEED DOWN",
@@ -220,34 +217,6 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
 
         updateSelectionVisual();
     }
-
-    public void input(KeyHandler k) {
-
-        // UP
-        if (k.k_up.isPressed && !prevUp) {
-            changeSelection(-1);
-        }
-        prevUp = k.k_up.isPressed;
-
-        // DOWN
-        if (k.k_down.isPressed && !prevDown) {
-            changeSelection(1);
-        }
-        prevDown = k.k_down.isPressed;
-
-        // LEFT
-        if (k.k_left.isPressed && !prevLeft) {
-            changeSelection(-1);
-        }
-        prevLeft = k.k_left.isPressed;
-
-        // RIGHT
-        if (k.k_right.isPressed && !prevRight) {
-            changeSelection(1);
-        }
-        prevRight = k.k_right.isPressed;
-    }
-
 
     //혹시나 SelectionOptionIndex가 필요할까봐 작성했으나 캡슐화 위배로 인해 다르게 수정하는 게 좋음
     public int getSelectedOptionIndex() {
