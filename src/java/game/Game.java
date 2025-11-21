@@ -148,7 +148,8 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         for(Ghost ghost : ghosts){
             levelManager.registerObserver(ghost);
         }
-
+        levelManager.registerObserver(this);
+        levelManager.registerObserver(keyInputManager);
     }
 
     private void registerScoreManager(){
