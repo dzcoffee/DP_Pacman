@@ -75,7 +75,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private void executeSelectedOption(){
         switch (currentSelectionIndex){
             case 0:
-                levelManager.increaseGhostSpeed();
+                levelManager.increasePacmanSpeed();
                 break;
             case 1:
                 levelManager.decreaseGhostSpeed();

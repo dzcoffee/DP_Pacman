@@ -6,9 +6,11 @@ import java.util.List;
 
 
 
-public class LevelManager implements ILevelDataSubject {
+public class LevelManager implements ILevelDataSubject, ILevelUpEventSubject {
     private final GameLevelData levelData;
     private final List<ILevelDataObserver> observerCollection;
+    private final List<ILevelUpEventObserver> levelUpEventObserverCollection;
+
 
     private final FrightenAllCommand frightenAllCommand;
 
@@ -16,6 +18,7 @@ public class LevelManager implements ILevelDataSubject {
         this.frightenAllCommand = frightenAllCommand;
         this.levelData = new GameLevelData();
         this.observerCollection = new ArrayList<>();
+        this.levelUpEventObserverCollection = new ArrayList<>();
     }
 
     public int getPacmanLife(){
@@ -30,6 +33,8 @@ public class LevelManager implements ILevelDataSubject {
     public void decreasePacmanLife(){
         levelData.decreasePacmanLife();
         notify(levelData);
+
+
     }
 
     public void increasePacmanSpeed(){
@@ -54,6 +59,8 @@ public class LevelManager implements ILevelDataSubject {
 
     public void frightenAll(){
         frightenAllCommand.execute();
+        notifyLevelUpEnd();
+
     }
 
     @Override
@@ -69,6 +76,26 @@ public class LevelManager implements ILevelDataSubject {
     @Override
     public void notify(GameLevelData data) {
         observerCollection.forEach(o -> o.updateLevelData(data));
+        notifyLevelUpEnd();
     }
 
+    @Override
+    public void registerObserver(ILevelUpEventObserver observer) {
+        levelUpEventObserverCollection.add(observer);
+    }
+
+    @Override
+    public void removeObserver(ILevelUpEventObserver observer) {
+        levelUpEventObserverCollection.remove(observer);
+    }
+
+    @Override
+    public void notifyLevelUpEvent() {
+
+    }
+
+    @Override
+    public void notifyLevelUpEnd() {
+        levelUpEventObserverCollection.forEach(o -> o.updateLevelUpEnd());
+    }
 }
