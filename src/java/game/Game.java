@@ -11,6 +11,7 @@ import game.ghostStates.FrightenedMode;
 import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
 import game.level.FrightenAllCommand;
+import game.level.ILevelUpEventObserver;
 import game.level.LevelManager;
 import game.score.ScoreManager;
 import game.utils.CollisionDetector;
@@ -26,7 +27,7 @@ import java.util.List;
 
 
 //Classe gérant le jeu en lui même
-public class Game implements Observer, GameMediator {
+public class Game implements Observer, ILevelUpEventObserver, GameMediator {
     //Pour lister les différentes entités présentes sur la fenêtre
     private List<Entity> objects = new ArrayList();
     private List<Ghost> ghosts = new ArrayList();
@@ -36,6 +37,7 @@ public class Game implements Observer, GameMediator {
     private static Blinky blinky;
 
     private SoundManager soundManager;
+    private volatile boolean paused = false;
     private static boolean firstInput = false;
     private StaticEntity[][] gumGrid;
     private int cellSize = 8;
@@ -150,6 +152,7 @@ public class Game implements Observer, GameMediator {
     }
 
     private void registerScoreManager(){
+        scoreManager.registerObserver(this);
         scoreManager.registerObserver(keyInputManager);
         scoreManager.setUIPanel(GameLauncher.getUIPanel());
     }
@@ -170,6 +173,7 @@ public class Game implements Observer, GameMediator {
 
     //Mise à jour de toutes les entités
     public void update() {
+        if (paused) return;
         for (Entity o: objects) {
             if (!o.isDestroyed()) o.update();
         }
@@ -268,5 +272,14 @@ public class Game implements Observer, GameMediator {
         }
 
 
+    }
+
+    @Override
+    public void updateLevelUpEvent() {
+        paused = true;
+    }
+    @Override
+    public void updateLevelUpEnd() {
+        paused = false;
     }
 }
