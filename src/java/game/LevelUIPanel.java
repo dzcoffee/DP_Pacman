@@ -30,7 +30,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private JPanel[] optionItems;      // 개별 옵션 패널 (배경색 변경용)
     private JLabel[] optionTexts;      // 개별 옵션 텍스트
     private JPanel operationPanel;
-    private int currentSelectionIndex = 0; // 현재 선택된 옵션 (0~3)
+    private int currentSelectionIndex = 3; // 현재 선택된 옵션 (0~3)
 
     private final String[] OPTION_NAMES = {
             "PACMAN SPEED UP",
@@ -243,4 +243,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     //TODO get메서드는 Encapsulation 위배로 사용하지 않는 게 좋으나 일단 UIPanel과 유사하게 구성하기 위해 작성
     public int getLevel() {return this.level;}
 
+    public boolean getNowVisible(){
+        return nowVisible;
+    }
 }
