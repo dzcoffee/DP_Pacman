@@ -132,7 +132,9 @@ public class LevelUIPanelTest {
 
         // LevelManager의 increasePacmanSpeed()가 호출되었는지 확인
         verify(mockLevelManager, times(1)).increasePacmanSpeed();
+        verify(mockLevelManager, never()).frightenAll();
         verify(mockLevelManager, never()).decreaseGhostSpeed();
+        verify(mockLevelManager, never()).increasePacmanLife();
 
         assertFalse(mockKeyHandler.k_enter.isPressed, "Enter 키 상태가 해제되어야 한다.");
     }
