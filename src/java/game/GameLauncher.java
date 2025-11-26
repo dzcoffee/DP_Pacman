@@ -75,4 +75,8 @@ public class GameLauncher {
     public static void addLevelMangerInLevelUIPanel(LevelManager levelManager) {
         levelUIPanel.setLevelManager(levelManager);
     }
+
+    public static StatusUIPanel getStatusUIPanel() {
+        return statusUIPanel;
+    }
 }

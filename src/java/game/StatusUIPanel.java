@@ -1,9 +1,12 @@
 package game;
 
+import game.level.GameLevelData;
+import game.level.ILevelDataObserver;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class StatusUIPanel extends JPanel {
+public class StatusUIPanel extends JPanel implements ILevelDataObserver {
     public static int width;
     public static int height;
 
@@ -13,6 +16,11 @@ public class StatusUIPanel extends JPanel {
 
     // 상태바 행 전체를 담을 JPanel을 멤버 변수로 선언
     private JPanel statusRowPanel;
+
+    @Override
+    public void updateLevelData(GameLevelData data){
+        updateStatus(data.getPacmanSpeed(), data.getGhostSpeed(), data.getPacmanLife());
+    }
 
     public StatusUIPanel(int width, int height) {
         this.width = width;
@@ -32,45 +40,47 @@ public class StatusUIPanel extends JPanel {
     }
 
     private void initializeLabels() {
-        Font statusFont = new Font("Arial", Font.BOLD, 18);
+        Font statusFont = new Font("Arial", Font.BOLD, 14);
         Color textColor = Color.WHITE;
 
         // statusRowPanel을 여기서 초기화하고, 이 패널에만 레이블을 추가합니다.
         statusRowPanel = new JPanel();
-        statusRowPanel.setLayout(new BorderLayout(10, 0)); // SPEED/GHOST/LIFE 간 간격 10px
+        statusRowPanel.setLayout(new GridLayout(1,3,10,0)); // SPEED/GHOST/LIFE 간 간격 10px
         statusRowPanel.setBackground(Color.BLACK);
         // BoxLayout에서 중앙 정렬을 위해 필요
         statusRowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // 좌측: Pacman Speed
-        pacmanSpeedLabel = new JLabel("SPEED: 1x");
+        pacmanSpeedLabel = new JLabel("SPEED: 1.0x");
         pacmanSpeedLabel.setFont(statusFont);
         pacmanSpeedLabel.setForeground(textColor);
-        pacmanSpeedLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0)); // 좌측 패딩
+        pacmanSpeedLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        pacmanSpeedLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // 좌측 패딩
         statusRowPanel.add(pacmanSpeedLabel, BorderLayout.WEST);
 
         // 중앙: Ghost Speed
-        ghostSpeedLabel = new JLabel("GHOST: 1x");
+        ghostSpeedLabel = new JLabel("GHOST: 1.0x");
         ghostSpeedLabel.setFont(statusFont);
         ghostSpeedLabel.setForeground(textColor);
-        // 중앙 요소는 좌우 패딩을 주어 양쪽 요소와 충분히 떨어지게 합니다.
-        ghostSpeedLabel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        ghostSpeedLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        ghostSpeedLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         statusRowPanel.add(ghostSpeedLabel, BorderLayout.CENTER);
 
         // 우측: Pacman Life
         pacmanLifeLabel = new JLabel("LIFE: 1");
         pacmanLifeLabel.setFont(statusFont);
         pacmanLifeLabel.setForeground(Color.RED);
-        pacmanLifeLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10)); // 우측 패딩
+        pacmanLifeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        pacmanLifeLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // 우측 패딩
         statusRowPanel.add(pacmanLifeLabel, BorderLayout.EAST);
     }
 
-    private void updateStatus(int pacmanSpeedIndex, int ghostSpeedIndex, int pacmanLife) {
+    private void updateStatus(float pacmanSpeedIndex, float ghostSpeedIndex, int pacmanLife) {
         // 좌측 업데이트
-        pacmanSpeedLabel.setText(String.format("SPEED: %dx", pacmanSpeedIndex));
+        pacmanSpeedLabel.setText(String.format("SPEED: %.1fx", pacmanSpeedIndex));
 
         // 중앙 업데이트
-        ghostSpeedLabel.setText(String.format("GHOST: %dx", ghostSpeedIndex));
+        ghostSpeedLabel.setText(String.format("GHOST: %.1fx", ghostSpeedIndex));
 
         // 우측 업데이트: pacmanLife 수만큼 하트(♥)를 표시
         String lifeDisplay = "LIFE: " + pacmanLife;
