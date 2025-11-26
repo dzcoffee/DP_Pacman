@@ -45,6 +45,7 @@ public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
 
     @Override
     public void updateLevelUpEvent(){
+        updateLabel(1);
         showLevelUpMenu(!nowVisible);
     }
 
