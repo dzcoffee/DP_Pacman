@@ -117,7 +117,7 @@ public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
     }
 
     //level Label Update하는 메서드
-    public void updateLabel(int incrLevel) {
+    private void updateLabel(int incrLevel) {
         this.level += incrLevel;
         this.levelLabel.setText("Level: " + level);
     }
