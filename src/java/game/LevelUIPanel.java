@@ -233,9 +233,9 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
                 optionTexts[i].setFont(new Font("Arial", Font.BOLD, 18));
             } else {
                 // 선택 안됨: 회색 테두리 + 흰색 폰트
-                optionItems[i].setBorder(new LineBorder(Color.GRAY, 1));
+                optionItems[i].setBorder(new LineBorder(Color.GRAY, 3));
                 optionTexts[i].setForeground(Color.WHITE);
-                optionTexts[i].setFont(new Font("Arial", Font.PLAIN, 16));
+                optionTexts[i].setFont(new Font("Arial", Font.BOLD, 18));
             }
         }
     }
