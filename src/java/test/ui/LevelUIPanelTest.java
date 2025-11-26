@@ -98,7 +98,7 @@ public class LevelUIPanelTest {
     }
 
 
-    // --- 3. 키 입력 및 실행 (executeSelectedOption) 테스트 ---
+    // --- 3. 키 입력 테스트 ---
 
     @Test
     void testInput_UpKey() {
@@ -119,6 +119,8 @@ public class LevelUIPanelTest {
         assertEquals(0, levelUIPanel.getSelectedOptionIndex(), "DOWN 키 입력 시 인덱스가 3->0으로 변경되어야 한다.");
         assertFalse(mockKeyHandler.k_down.isPressed, "DOWN 키 상태가 해제되어야 한다.");
     }
+
+    // --- 4. LevelManger로 위임하여 실행 (executeSelectedOption) 테스트 ---
 
     @Test
     void testExecuteSelectedOption_Case0_PacmanSpeedUp() {
