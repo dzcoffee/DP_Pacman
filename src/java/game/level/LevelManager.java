@@ -1,24 +1,35 @@
 package game.level;
 
+import game.Observer;
+import game.entities.PacGum;
+import game.entities.SuperPacGum;
+import game.entities.ghosts.Ghost;
+import game.ghostStates.EatenMode;
+import game.ghostStates.FrightenedMode;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 
 
-public class LevelManager implements ILevelDataSubject, ILevelUpEventSubject {
+public class LevelManager implements Observer,ILevelDataSubject, ILevelUpEventSubject {
     private final GameLevelData levelData;
     private final List<ILevelDataObserver> observerCollection;
     private final List<ILevelUpEventObserver> levelUpEventObserverCollection;
 
 
-    private final FrightenAllCommand frightenAllCommand;
+    private FrightenAllCommand frightenAllCommand;
 
-    public LevelManager(FrightenAllCommand frightenAllCommand) {
-        this.frightenAllCommand = frightenAllCommand;
+    public LevelManager() {
+
         this.levelData = new GameLevelData();
         this.observerCollection = new ArrayList<>();
         this.levelUpEventObserverCollection = new ArrayList<>();
+    }
+
+    public void setFrightenAllCommand(FrightenAllCommand frightenAllCommand) {
+        this.frightenAllCommand = frightenAllCommand;
     }
 
     public int getPacmanLife(){
@@ -97,5 +108,33 @@ public class LevelManager implements ILevelDataSubject, ILevelUpEventSubject {
     @Override
     public void notifyLevelUpEnd() {
         levelUpEventObserverCollection.forEach(o -> o.updateLevelUpEnd());
+    }
+
+    @Override
+    public void updatePacGumEaten(PacGum pg) {
+
+    }
+
+    @Override
+    public void updateSuperPacGumEaten(SuperPacGum spg) {
+
+    }
+
+    @Override
+    public void updateGhostCollision(Ghost gh) {
+        if (gh.getState() instanceof FrightenedMode) {
+            gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
+        }else if (!(gh.getState() instanceof EatenMode)) {
+            // 게임 life 검사 로직 추가
+            decreasePacmanLife();
+            int pacmanLife = getPacmanLife();
+
+            if(pacmanLife > 0){
+                gh.getState().eaten();
+            }
+            else{
+                System.exit(0);
+            }
+        }
     }
 }
