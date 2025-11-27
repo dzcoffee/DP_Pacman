@@ -19,6 +19,9 @@ public abstract class MovingEntity extends Entity {
 
     protected float spdMultiplier = 1;
 
+    private long lastTeleportTime = 0;
+    private static final long TELEPORT_COOLDOWN = 2000;
+
     public MovingEntity(int size, int xPos, int yPos, int spd, String spriteName, int nbSubimagesPerCycle, float imageSpd) {
         super(size, xPos, yPos);
         this.spd = spd;
@@ -157,5 +160,17 @@ public abstract class MovingEntity extends Entity {
 
     public int getSpd() {
         return spd;
+    }
+
+    public void teleportTo(int targetX, int targetY) {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastTeleportTime < TELEPORT_COOLDOWN) {
+            return; 
+        }
+        this.xPos = targetX;
+        this.yPos = targetY;
+
+        this.lastTeleportTime = currentTime;
     }
 }
