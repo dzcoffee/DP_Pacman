@@ -11,6 +11,7 @@ public class GameLauncher {
     private static UIPanel uiPanel;
     private static LevelUIPanel levelUIPanel;
     private static GameplayPanel gameplayPanel;
+    private static StatusUIPanel statusUIPanel;
 
     public static void main(String[] args) {
         JFrame window = new JFrame();
@@ -42,9 +43,15 @@ public class GameLauncher {
         gbc.weighty = 0.2;
         uiContainer.add(uiPanel, gbc);
 
-        levelUIPanel = new LevelUIPanel(288, 496);
+        statusUIPanel = new StatusUIPanel(72, 496);
+        statusUIPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         gbc.gridy = 1;      // 두번째 줄에 위치
-        gbc.weighty = 0.8;
+        gbc.weighty = 0.2;
+        uiContainer.add(statusUIPanel, gbc);
+
+        levelUIPanel = new LevelUIPanel(288, 496);
+        gbc.gridy = 2;      // 두번째 줄에 위치
+        gbc.weighty = 0.6;
         uiContainer.add(levelUIPanel, gbc);
 
         // 4. UI 컨테이너를 gameWindow의 우측(EAST)에 추가
@@ -67,5 +74,9 @@ public class GameLauncher {
 
     public static void addLevelMangerInLevelUIPanel(LevelManager levelManager) {
         levelUIPanel.setLevelManager(levelManager);
+    }
+
+    public static StatusUIPanel getStatusUIPanel() {
+        return statusUIPanel;
     }
 }

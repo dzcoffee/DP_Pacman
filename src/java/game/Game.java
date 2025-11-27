@@ -150,6 +150,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         }
         levelManager.registerObserver(this);
         levelManager.registerObserver(keyInputManager);
+        levelManager.registerObserver(GameLauncher.getStatusUIPanel());
     }
 
     private void registerScoreManager(){
