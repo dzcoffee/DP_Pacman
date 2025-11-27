@@ -26,7 +26,7 @@ public class SoundManager {
         }
     }
 
-    private void loadSound(String path, String name) {
+    protected void loadSound(String path, String name) {
     try {
         InputStream audioInStream = SoundManager.class.getResourceAsStream("/" + path);
         if (audioInStream == null) {
@@ -42,7 +42,7 @@ public class SoundManager {
     }
 }
 
-    private void playSound(String name) {
+    protected void playSound(String name) {
         Clip clip = soundClips.get(name);
         if (clip != null && !clip.isRunning()) {
                 clip.setFramePosition(0);
@@ -50,14 +50,14 @@ public class SoundManager {
         }
     }
 
-    private void stopSound(String name) {
+    protected void stopSound(String name) {
         Clip clip = soundClips.get(name);
         if (clip != null && clip.isRunning()) {
             clip.stop();
         }
     }
 
-    private void startLoopIfNotRunning(String name) {
+    protected void startLoopIfNotRunning(String name) {
         Clip clip = soundClips.get(name);
         if (clip != null && !clip.isRunning()) {
             clip.setFramePosition(0);
@@ -65,7 +65,7 @@ public class SoundManager {
         }
     }
 
-    private void stopLoop(String name) {
+    protected void stopLoop(String name) {
         stopSound(name);
     }
 
