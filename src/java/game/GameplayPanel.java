@@ -7,6 +7,7 @@ import game.score.ScoreManager;
 import game.utils.KeyHandler;
 
 import game.utils.KeyHandler.Key;
+import game.utils.SoundManager;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -62,7 +63,7 @@ public class GameplayPanel extends JPanel implements Runnable {
         levelManager = new LevelManager();
         scoreManager = new ScoreManager();
         levelManager.setFrightenAllCommand(new FrightenAllCommand(game));
-        game.init(levelManager,scoreManager);
+        game.init(levelManager,scoreManager, SoundManager.getInstance());
     }
 
     //mise à jour du jeu

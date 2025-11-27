@@ -58,7 +58,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
     }
 
-    public void init(LevelManager levelManager, ScoreManager scoreManager){
+    public void init(LevelManager levelManager, ScoreManager scoreManager, SoundManager soundManager){
         //Initialisation du jeu
 
         //Chargement du fichier csv du niveau
@@ -73,7 +73,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         gumGrid = new StaticEntity[cellsPerColumn][cellsPerRow];
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
-        this.soundManager = new SoundManager();
+        this.soundManager = soundManager;
         soundManager.gameStart();
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
