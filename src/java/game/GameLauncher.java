@@ -22,7 +22,7 @@ public class GameLauncher {
 
         //Création de la "zone de jeu"
         try {
-            gameplayPanel = new GameplayPanel(448,496);
+            gameplayPanel = new GameplayPanel(448, 496);
             gameWindow.add(gameplayPanel);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +73,8 @@ public class GameLauncher {
     }
 
     public static void addLevelMangerInLevelUIPanel(LevelManager levelManager) {
-        levelUIPanel.setLevelManager(levelManager);
+        if (levelUIPanel != null)
+            levelUIPanel.setLevelManager(levelManager);
     }
 
     public static StatusUIPanel getStatusUIPanel() {
