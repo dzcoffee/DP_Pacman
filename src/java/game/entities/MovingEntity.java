@@ -41,8 +41,13 @@ public abstract class MovingEntity extends Entity {
 
     public void updatePosition() {
         //Mise à jour de la position de l'entité
-        int xSpd = (int)(this.xSpd * this.spdMultiplier);
-        int ySpd = (int)(this.ySpd * this.spdMultiplier);
+        int xSpd=this.xSpd;
+        int ySpd = this.ySpd;
+        if(this.spdMultiplier < 1){
+            xSpd = (int) (this.xSpd * this.spdMultiplier);
+            ySpd = (int) (this.ySpd * this.spdMultiplier);
+
+        }
         if (!(xSpd == 0 && ySpd == 0)) { //Si la vitesse horizontale ou la vitesse verticale n'est pas nulle, on incrémente la position horizontale et verticale en conséquence
             xPos+=xSpd;
             yPos+=ySpd;

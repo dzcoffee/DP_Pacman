@@ -56,7 +56,7 @@ public class Pacman extends MovingEntity implements Sujet, ILevelDataObserver {
             if (xSpd != 0) {
                 xSpd = 0;
                 ySpd = new_ySpd;
-            }else{
+            } else {
                 xSpd = new_xSpd;
                 ySpd = 0;
             }
@@ -81,15 +81,19 @@ public class Pacman extends MovingEntity implements Sujet, ILevelDataObserver {
             notifyObserverGhostCollision(gh);
         }
 
+
         TeleportZone tz = (TeleportZone) collisionDetector.checkCollision(this, TeleportZone.class);
         if (tz != null) {
             TeleportZone dest = tz.getPartner();
             this.teleportTo(dest.getxPos(), dest.getyPos());
         }
+        for (int i = 0; i < this.spdMultiplier; ++i) {
+            if (!WallCollisionDetector.checkWallCollision(this, xSpd, ySpd)) {
+                //S'il n'y a pas de mur à la prochaine position potentielle de Pacman, on met à jour sa position
+                updatePosition();
 
-        //S'il n'y a pas de mur à la prochaine position potentielle de Pacman, on met à jour sa position
-        if (!WallCollisionDetector.checkWallCollision(this, xSpd, ySpd)) {
-            updatePosition();
+            }
+
         }
     }
 
