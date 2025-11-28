@@ -1,6 +1,9 @@
 package game;
 
 import game.keyInputManager.KeyInputManager;
+import game.level.FrightenAllCommand;
+import game.level.LevelManager;
+import game.score.ScoreManager;
 import game.utils.KeyHandler;
 
 import game.utils.KeyHandler.Key;
@@ -24,6 +27,9 @@ public class GameplayPanel extends JPanel implements Runnable {
     private KeyHandler key;
 
     private Game game;
+
+    private LevelManager levelManager;
+    private ScoreManager scoreManager;
 
     public GameplayPanel(int width, int height) throws IOException {
         this.width = width;
@@ -53,6 +59,10 @@ public class GameplayPanel extends JPanel implements Runnable {
         key = new KeyHandler(this);
 
         game = new Game();
+        levelManager = new LevelManager();
+        scoreManager = new ScoreManager();
+        levelManager.setFrightenAllCommand(new FrightenAllCommand(game));
+        game.init(levelManager,scoreManager);
     }
 
     //mise à jour du jeu

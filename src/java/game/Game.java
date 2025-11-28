@@ -10,7 +10,6 @@ import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
 import game.keyInputManager.KeyInputManager;
 import game.ghostStates.GhostState;
-import game.level.FrightenAllCommand;
 import game.level.ILevelUpEventObserver;
 import game.level.LevelManager;
 import game.score.ScoreManager;
@@ -42,10 +41,11 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
     private volatile boolean paused = false;
     private static boolean firstInput = false;
     private StaticEntity[][] gumGrid;
-    private int cellSize = 8;
+    private int cellSize 
 
-    private final KeyInputManager keyInputManager;
     private final Color[] portalColors = {Color.CYAN, Color.MAGENTA, Color.ORANGE};
+    private KeyInputManager keyInputManager;
+
     private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
         for(Ghost gh: ghosts) {
             if(ghostState.isInstance(gh.getState())) {
@@ -55,10 +55,13 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         return false;
     }
 
-    private final LevelManager levelManager;
-    private final ScoreManager scoreManager;
+
 
     public Game(){
+
+    }
+
+    public void init(LevelManager levelManager, ScoreManager scoreManager){
         //Initialisation du jeu
 
         //Chargement du fichier csv du niveau
@@ -75,7 +78,6 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         AbstractGhostFactory abstractGhostFactory = null;
         this.soundManager = new SoundManager();
         soundManager.gameStart();
-        scoreManager = new ScoreManager();
         Map<String, List<TeleportZone>> portalMap = new HashMap<>(); // 포탈 저장용
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
@@ -90,6 +92,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
                     //Enregistrement des différents observers de Pacman
 //                    pacman.registerObserver(GameLauncher.getUIPanel());
                     pacman.registerObserver(scoreManager);
+                    pacman.registerObserver(levelManager);
                     pacman.registerObserver(this);
                 }else if (dataChar.equals("b") || dataChar.equals("p") || dataChar.equals("i") || dataChar.equals("c")) { //Création des fantômes en utilisant les différentes factories
                     switch (dataChar) {
@@ -161,15 +164,14 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         keyInputManager = new KeyInputManager(pacman, GameLauncher.getLevelUIPanel());
 
         //Level Manager
-        levelManager = new LevelManager(new FrightenAllCommand(this));
-        registerLevelManager();
-        registerScoreManager();
+        registerLevelManager(levelManager);
+        registerScoreManager(scoreManager);
         GameLauncher.addLevelMangerInLevelUIPanel(levelManager);
 
     }
 
     // 레벨매니저 구독
-    private void registerLevelManager(){
+    private void registerLevelManager(LevelManager levelManager){
         levelManager.registerObserver(pacman);
         for(Ghost ghost : ghosts){
             levelManager.registerObserver(ghost);
@@ -179,10 +181,11 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         levelManager.registerObserver(GameLauncher.getStatusUIPanel());
     }
 
-    private void registerScoreManager(){
+    private void registerScoreManager(ScoreManager scoreManager){
         scoreManager.registerObserver(this);
         scoreManager.registerObserver(keyInputManager);
         scoreManager.setUIPanel(GameLauncher.getUIPanel());
+        scoreManager.registerObserver(GameLauncher.getLevelUIPanel());
     }
 
     public void eatGhostAll(){
@@ -243,25 +246,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
     @Override
     public void updateGhostCollision(Ghost gh) {
-        if (gh.getState() instanceof FrightenedMode) {
-            gh.getState().eaten(); //S'il existe une transition particulière quand le fantôme est mangé, son état change en conséquence
-        }else if (!(gh.getState() instanceof EatenMode)) {
-            // 게임 life 검사 로직 추가
-            levelManager.decreasePacmanLife();
-            int pacmanLife = levelManager.getPacmanLife();
 
-            if(pacmanLife > 0){
-                gh.getState().eaten();
-            }
-            else{
-                //게임 종료 로직
-//                System.out.println("Game over !\nScore : " + GameLauncher.getUIPanel().getScore()); //Quand Pacman rentre en contact avec un Fantôme qui n'est ni effrayé, ni mangé, c'est game over !
-                System.exit(0); //TODO
-            }
-
-
-
-        }
     }
 
     public static void setFirstInput(boolean b) {
