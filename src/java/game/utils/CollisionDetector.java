@@ -20,6 +20,13 @@ public class CollisionDetector {
         return null;
     }
 
+    public Entity checkCollisionWithDestroyed(Entity obj, Class<? extends Entity> collisionCheck) {
+        for (Entity e : game.getEntities()) {
+            if (e.isDestroyed() && collisionCheck.isInstance(e) && e.getHitbox().intersects(obj.getHitbox())) return e;
+        }
+        return null;
+    }
+
     //Même chose que la méthode précédente, mais toutes les hitboxes sont considérées comme rectangulaires
     public Entity checkCollisionRect(Entity obj, Class<? extends Entity> collisionCheck) {
         for (Entity e : game.getEntities()) {

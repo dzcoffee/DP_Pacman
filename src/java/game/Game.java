@@ -4,7 +4,6 @@ import game.entities.*;
 
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
-import game.entities.ghosts.Pinky;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
@@ -40,8 +39,6 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
     private SoundManager soundManager;
     private volatile boolean paused = false;
     private static boolean firstInput = false;
-    private StaticEntity[][] gumGrid;
-    private int cellSize = 8;
 
     private final Color[] portalColors = {Color.CYAN, Color.MAGENTA, Color.ORANGE};
     private KeyInputManager keyInputManager;
@@ -73,7 +70,8 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         }
         int cellsPerRow = data.get(0).size();
         int cellsPerColumn = data.size();
-        gumGrid = new StaticEntity[cellsPerColumn][cellsPerRow];
+        int cellSize = 8;
+
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
         this.soundManager = new SoundManager();
@@ -118,13 +116,9 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
                         blinky = (Blinky) ghost;
                     }
                 }else if (dataChar.equals(".")) { //Création des PacGums
-                    StaticEntity pg = new PacGum(xx * cellSize, yy * cellSize);
-                    objects.add(pg);
-                    gumGrid[yy][xx]= pg;
+                    objects.add(new PacGum(xx * cellSize, yy * cellSize));
                 }else if (dataChar.equals("o")) { //Création des SuperPacGums
-                    StaticEntity spg = new SuperPacGum(xx * cellSize, yy * cellSize);
-                    objects.add(spg);
-                    gumGrid[yy][xx]= spg;
+                    objects.add(new SuperPacGum(xx * cellSize, yy * cellSize));
                 }else if (dataChar.equals("-")) { //Création des murs de la maison des fantômes
                     objects.add(new GhostHouse(xx * cellSize, yy * cellSize));
                 }else if (dataChar.matches("\\d+")) {
@@ -271,16 +265,6 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
             }
             else if (event == GameEvent.GHOST_ARRIVED_HOME) {
                 if (!isAnyGhostInState(EatenMode.class)) soundManager.stopEatenLoop();
-            }
-            else if (event == GameEvent.GHOST_MOVED_TO_TILE) {
-                Ghost gh = (Ghost) colleague;
-                int x_pos = gh.getxPos(), y_pos = gh.getyPos();
-                StaticEntity gum = gumGrid[(y_pos/cellSize + 1)%gumGrid.length][(x_pos/cellSize + 1)%gumGrid[0].length];
-                if (gh instanceof Pinky) {
-                    if (gum != null) {
-                        gum.revive();
-                    }
-                }
             }
         }
 

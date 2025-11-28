@@ -5,5 +5,4 @@ public enum GameEvent {
     GHOST_STATE_CHANGED_TO_EATEN,
     GHOST_TIMER_OVER,
     GHOST_ARRIVED_HOME,
-    GHOST_MOVED_TO_TILE,
 }
