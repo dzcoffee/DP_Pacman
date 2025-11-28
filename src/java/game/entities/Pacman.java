@@ -81,6 +81,12 @@ public class Pacman extends MovingEntity implements Sujet, ILevelDataObserver {
             notifyObserverGhostCollision(gh);
         }
 
+        TeleportZone tz = (TeleportZone) collisionDetector.checkCollision(this, TeleportZone.class);
+        if (tz != null) {
+            TeleportZone dest = tz.getPartner();
+            this.teleportTo(dest.getxPos(), dest.getyPos());
+        }
+
         //S'il n'y a pas de mur à la prochaine position potentielle de Pacman, on met à jour sa position
         if (!WallCollisionDetector.checkWallCollision(this, xSpd, ySpd)) {
             updatePosition();

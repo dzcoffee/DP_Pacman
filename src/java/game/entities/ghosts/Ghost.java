@@ -5,10 +5,12 @@ import game.GameColleague;
 import game.GameEvent;
 import game.GameMediator;
 import game.entities.MovingEntity;
+import game.entities.TeleportZone;
 import game.ghostStates.*;
 import game.ghostStrategies.IGhostStrategy;
 import game.level.GameLevelData;
 import game.level.ILevelDataObserver;
+import game.utils.CollisionDetector;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,6 +40,7 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     protected IGhostStrategy strategy;
 
     private GameMediator gameMediator;
+    private CollisionDetector collisionDetector;
     private int currentTileX;
     private int currentTileY;
 
@@ -66,6 +69,9 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     	this.gameMediator = mediator;
     }
 
+    public void setCollisionDetector(CollisionDetector collisionDetector) {
+        this.collisionDetector = collisionDetector;
+    }
     //Méthodes pour les transitions entre les différents états
     public void switchChaseMode() {
         state = chaseMode;
@@ -175,6 +181,11 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
         }
 
         //Selon l'état, le fantôme calcule sa prochaine direction, et sa position est ensuite mise à jour
+        TeleportZone tz = (TeleportZone) collisionDetector.checkCollision(this, TeleportZone.class);
+        if (tz != null) {
+            TeleportZone dest = tz.getPartner();
+            this.teleportTo(dest.getxPos(), dest.getyPos());
+        }
         state.computeNextDir();
         updatePosition();
     }
