@@ -41,7 +41,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
     private volatile boolean paused = false;
     private static boolean firstInput = false;
     private StaticEntity[][] gumGrid;
-    private int cellSize 
+    private int cellSize = 8;
 
     private final Color[] portalColors = {Color.CYAN, Color.MAGENTA, Color.ORANGE};
     private KeyInputManager keyInputManager;
