@@ -1,11 +1,8 @@
 package game;
 
+import game.level.ILevelUpEventObserver;
 import game.utils.KeyHandler;
-import game.utils.WallCollisionDetector;
-import game.level.GameLevelData;
-import game.level.ILevelDataObserver;
 import game.level.LevelManager;
-import game.utils.KeyHandler;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -14,7 +11,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 //TODO Merge이후 ILevelDataObserver를 implements하도록 구현하여야 함
-public class LevelUIPanel extends JPanel implements ILevelDataObserver {
+public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
     public static int width;
     public static int height;
 
@@ -41,9 +38,20 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
 
     //update를 받게 되면 LevelUI의 상태를 변경(아마 그런 용도로 작성하신 게 아닐까?)
     // 그럼 얘가 LevelManager라는 Observer에게 명령을 내리면서도 구독중이라 상태가 변하는? 구조? 이게 맞는지
+//    @Override
+//    public void updateLevelData(GameLevelData data) {
+//        showLevelUpMenu(!nowVisible);
+//    }
+
     @Override
-    public void updateLevelData(GameLevelData data) {
+    public void updateLevelUpEvent(){
+        updateLabel(1);
         showLevelUpMenu(!nowVisible);
+    }
+
+    @Override
+    public void updateLevelUpEnd(){
+
     }
 
     public void setLevelManager(LevelManager levelManager) {
@@ -67,8 +75,9 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
 
         else if (k.k_enter.isPressed) {
             executeSelectedOption(); // 선택된 옵션 실행
-
+            showLevelUpMenu(!nowVisible);
             k.k_enter.isPressed = false;
+
         }
     }
 
@@ -108,7 +117,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     }
 
     //level Label Update하는 메서드
-    public void updateLabel(int incrLevel) {
+    private void updateLabel(int incrLevel) {
         this.level += incrLevel;
         this.levelLabel.setText("Level: " + level);
     }
@@ -183,7 +192,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
         this.add(optionsPanel, BorderLayout.CENTER);
         this.add(operationPanel, BorderLayout.SOUTH);
 
-        showLevelUpMenu(true);
+        //showLevelUpMenu(true);
         //TODO 테스트 용으로 임시로 작성함 이후 연결 시에는 주석처리 필요
     }
 

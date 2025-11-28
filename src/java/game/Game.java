@@ -158,6 +158,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         scoreManager.registerObserver(this);
         scoreManager.registerObserver(keyInputManager);
         scoreManager.setUIPanel(GameLauncher.getUIPanel());
+        scoreManager.registerObserver(GameLauncher.getLevelUIPanel());
     }
 
     public void eatGhostAll(){
