@@ -4,7 +4,6 @@ import game.entities.*;
 
 import game.entities.ghosts.Blinky;
 import game.entities.ghosts.Ghost;
-import game.entities.ghosts.Pinky;
 import game.ghostFactory.*;
 import game.ghostStates.EatenMode;
 import game.ghostStates.FrightenedMode;
@@ -21,7 +20,9 @@ import game.utils.SoundManager;
 import java.awt.*;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 
@@ -38,9 +39,8 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
     private SoundManager soundManager;
     private volatile boolean paused = false;
     private static boolean firstInput = false;
-    private StaticEntity[][] gumGrid;
-    private int cellSize = 8;
 
+    private final Color[] portalColors = {Color.CYAN, Color.MAGENTA, Color.ORANGE};
     private KeyInputManager keyInputManager;
 
     private boolean isAnyGhostInState(Class<? extends GhostState> ghostState) {
@@ -58,7 +58,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
     }
 
-    public void init(LevelManager levelManager, ScoreManager scoreManager){
+    public void init(LevelManager levelManager, ScoreManager scoreManager, SoundManager soundManager){
         //Initialisation du jeu
 
         //Chargement du fichier csv du niveau
@@ -70,11 +70,13 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         }
         int cellsPerRow = data.get(0).size();
         int cellsPerColumn = data.size();
-        gumGrid = new StaticEntity[cellsPerColumn][cellsPerRow];
+        int cellSize = 8;
+
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
-        this.soundManager = new SoundManager();
+        this.soundManager = soundManager;
         soundManager.gameStart();
+        Map<String, List<TeleportZone>> portalMap = new HashMap<>(); // 포탈 저장용
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
             for(int yy = 0 ; yy < cellsPerColumn ; yy++) {
@@ -108,23 +110,42 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
                     Ghost ghost = abstractGhostFactory.makeGhost(xx * cellSize, yy * cellSize);
                     ghost.setMediator(this);
+                    ghost.setCollisionDetector(collisionDetector);
                     ghosts.add(ghost);
                     if (dataChar.equals("b")) {
                         blinky = (Blinky) ghost;
                     }
                 }else if (dataChar.equals(".")) { //Création des PacGums
-                    StaticEntity pg = new PacGum(xx * cellSize, yy * cellSize);
-                    objects.add(pg);
-                    gumGrid[yy][xx]= pg;
+                    objects.add(new PacGum(xx * cellSize, yy * cellSize));
                 }else if (dataChar.equals("o")) { //Création des SuperPacGums
-                    StaticEntity spg = new SuperPacGum(xx * cellSize, yy * cellSize);
-                    objects.add(spg);
-                    gumGrid[yy][xx]= spg;
+                    objects.add(new SuperPacGum(xx * cellSize, yy * cellSize));
                 }else if (dataChar.equals("-")) { //Création des murs de la maison des fantômes
                     objects.add(new GhostHouse(xx * cellSize, yy * cellSize));
+                }else if (dataChar.matches("\\d+")) {
+                    TeleportZone tz = new TeleportZone(xx * cellSize, yy * cellSize);
+                    portalMap.computeIfAbsent(dataChar, k -> new ArrayList<>()).add(tz);
                 }
             }
         }
+        int colorIndex = 0;
+        for (String key : portalMap.keySet()) {
+            List<TeleportZone> group = portalMap.get(key);
+            if (group.size() == 2) {
+                TeleportZone p1 = group.get(0);
+                TeleportZone p2 = group.get(1);
+                p1.setPartner(p2);
+                p2.setPartner(p1);
+                Color pairColor = portalColors[colorIndex % portalColors.length];
+                p1.setColor(pairColor);
+                p2.setColor(pairColor);
+                objects.add(p1);
+                objects.add(p2);
+                colorIndex++;
+            } else {
+                System.err.println("경고: 포탈 ID " + key + "의 개수가 " + group.size() + "개입니다. (2개여야 함)");
+            }
+        }
+
         objects.add(pacman);
         objects.addAll(ghosts);
 
@@ -158,6 +179,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         scoreManager.registerObserver(this);
         scoreManager.registerObserver(keyInputManager);
         scoreManager.setUIPanel(GameLauncher.getUIPanel());
+        scoreManager.registerObserver(GameLauncher.getLevelUIPanel());
     }
 
     public void eatGhostAll(){
@@ -243,16 +265,6 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
             }
             else if (event == GameEvent.GHOST_ARRIVED_HOME) {
                 if (!isAnyGhostInState(EatenMode.class)) soundManager.stopEatenLoop();
-            }
-            else if (event == GameEvent.GHOST_MOVED_TO_TILE) {
-                Ghost gh = (Ghost) colleague;
-                int x_pos = gh.getxPos(), y_pos = gh.getyPos();
-                StaticEntity gum = gumGrid[(y_pos/cellSize + 1)%gumGrid.length][(x_pos/cellSize + 1)%gumGrid[0].length];
-                if (gh instanceof Pinky) {
-                    if (gum != null) {
-                        gum.revive();
-                    }
-                }
             }
         }
 

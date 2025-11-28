@@ -5,10 +5,12 @@ import game.GameColleague;
 import game.GameEvent;
 import game.GameMediator;
 import game.entities.MovingEntity;
+import game.entities.TeleportZone;
 import game.ghostStates.*;
 import game.ghostStrategies.IGhostStrategy;
 import game.level.GameLevelData;
 import game.level.ILevelDataObserver;
+import game.utils.CollisionDetector;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,8 +40,7 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     protected IGhostStrategy strategy;
 
     private GameMediator gameMediator;
-    private int currentTileX;
-    private int currentTileY;
+    protected CollisionDetector collisionDetector;
 
     public Ghost(int xPos, int yPos, String spriteName) {
         super(32, xPos, yPos, 2, spriteName, 2, 0.1f);
@@ -66,6 +67,9 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
     	this.gameMediator = mediator;
     }
 
+    public void setCollisionDetector(CollisionDetector collisionDetector) {
+        this.collisionDetector = collisionDetector;
+    }
     //Méthodes pour les transitions entre les différents états
     public void switchChaseMode() {
         state = chaseMode;
@@ -152,16 +156,6 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
                 state.timerModeOver();
                 isChasing = !isChasing;
             }
-            int cellSize = 8;
-            int newTileX = xPos / cellSize;
-            int newTileY = yPos / cellSize;
-            if (newTileX >= 0 && newTileY >= 0 && (newTileX != currentTileX || newTileY != currentTileY)) {
-                    this.currentTileX = newTileX;
-                    this.currentTileY = newTileY;
-                    if (gameMediator != null) {
-                        gameMediator.notify(this, GameEvent.GHOST_MOVED_TO_TILE);
-                    }
-            }
         }
 
         //Si le fantôme est sur la case juste au dessus de sa maison, l'état est notifié afin d'appliquer la transition adéquate
@@ -175,6 +169,11 @@ public abstract class Ghost extends MovingEntity implements ILevelDataObserver, 
         }
 
         //Selon l'état, le fantôme calcule sa prochaine direction, et sa position est ensuite mise à jour
+        TeleportZone tz = (TeleportZone) collisionDetector.checkCollision(this, TeleportZone.class);
+        if (tz != null) {
+            TeleportZone dest = tz.getPartner();
+            this.teleportTo(dest.getxPos(), dest.getyPos());
+        }
         state.computeNextDir();
         updatePosition();
     }
