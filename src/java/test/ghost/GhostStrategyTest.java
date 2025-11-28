@@ -12,6 +12,7 @@ import game.ghostStrategies.ClydeStrategy;
 import game.ghostStrategies.IGhostStrategy;
 import game.ghostStrategies.InkyStrategy;
 import game.ghostStrategies.PinkyStrategy;
+import game.utils.SoundManager;
 import java.io.IOException;
 
 import game.level.LevelManager;
@@ -30,7 +31,7 @@ public class GhostStrategyTest {
         game = new Game();
         LevelManager levelManager = new LevelManager();
         ScoreManager scoreManager = new ScoreManager();
-        game.init(levelManager, scoreManager);
+        game.init(levelManager, scoreManager, SoundManager.getInstance());
         gameplayPanel = new GameplayPanel(100,100);
     }
 
