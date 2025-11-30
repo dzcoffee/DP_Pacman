@@ -103,9 +103,11 @@ public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
     public LevelUIPanel(int width, int height) {
         this.width = width;
         this.height = height;
+        this.setLayout(new BorderLayout());
+
         setPreferredSize(new Dimension(width, height));
         this.setBackground(Color.black);
-        levelLabel = new JLabel("Level: " + level);
+        levelLabel = new JLabel("Level: " + level, SwingConstants.CENTER);
         levelLabel.setFont(levelLabel.getFont().deriveFont(20.0F));
         levelLabel.setForeground(Color.white);
 
