@@ -29,6 +29,8 @@ public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
     private JPanel operationPanel;
     private int currentSelectionIndex = 0; // 현재 선택된 옵션 (0~3)
 
+    private boolean[] SELECT_CHECK = new boolean[4];
+
     private final String[] OPTION_NAMES = {
             "PACMAN SPEED UP",
             "GHOST SPEED DOWN",
@@ -85,9 +87,11 @@ public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
         switch (currentSelectionIndex){
             case 0:
                 levelManager.increasePacmanSpeed();
+                SELECT_CHECK[currentSelectionIndex] = true;
                 break;
             case 1:
                 levelManager.decreaseGhostSpeed();
+                SELECT_CHECK[currentSelectionIndex] = true;
                 break;
             case 2:
                 levelManager.increasePacmanLife();
@@ -214,18 +218,31 @@ public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
     }
 
     public void changeSelection(int direction) {
-        //direction을 +1로 하면 아래로, -1로 하면 위로
         if (!optionsPanel.isVisible()) return; // 메뉴가 안 보이면 무시
 
-        currentSelectionIndex += direction;
+        // 무한 루프 방지용 (모든 옵션이 선택된 경우 대비)
+        int originalIndex = currentSelectionIndex;
 
-        // 옵션 Index 선택이 순환되도록 구현하였음
-        // (아래는 옵션이 4개임을 예시로 들어 설명, 실제로는 optionItems의 갯수에 따라 다르게 되도록 구현)
-        // index 3 -> 4가 되면 0번째로 순환
-        // index 0 -> -1이 되면 3번째로 순환
-        if (currentSelectionIndex >= optionItems.length) currentSelectionIndex = 0;
-        if (currentSelectionIndex < 0) currentSelectionIndex = optionItems.length - 1;
+        do {
+            // 1. 일단 한 칸 이동
+            currentSelectionIndex += direction;
 
+            // 2. 순환(Wrap) 로직 처리
+            if (currentSelectionIndex >= optionItems.length) {
+                currentSelectionIndex = 0;
+            }
+            if (currentSelectionIndex < 0) {
+                currentSelectionIndex = optionItems.length - 1;
+            }
+
+            // 3. 만약 한 바퀴를 다 돌아서 제자리로 왔다면 (모든 옵션이 이미 선택됨) 루프 종료
+            if (currentSelectionIndex == originalIndex) return;
+
+            // 4. 현재 위치가 '이미 선택된 상태(true)'라면 루프를 계속 돕니다.
+            //    false(선택 안 된 상태)가 나올 때까지 반복
+        } while (SELECT_CHECK[currentSelectionIndex]);
+
+        // 5. 최종 결정된 위치로 UI 업데이트
         updateSelectionVisual();
     }
 
