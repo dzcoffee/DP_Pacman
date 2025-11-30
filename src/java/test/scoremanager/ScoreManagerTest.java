@@ -6,10 +6,13 @@ import game.entities.PacGum;
 import game.entities.Pacman;
 import game.entities.SuperPacGum;
 import game.entities.ghosts.Ghost;
+import game.level.ILevelUpEventObserver;
 import game.score.ScoreManager;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.mockito.Mockito.*;
 
 public class ScoreManagerTest {
 
@@ -48,6 +51,20 @@ public class ScoreManagerTest {
 
 
 
+    }
+    @Test
+    public void testScoreManager_levelUpEvent() throws Exception {
+        ScoreManager scoreManager = new ScoreManager();
+
+        ILevelUpEventObserver observer = mock(ILevelUpEventObserver.class);
+        scoreManager.registerObserver(observer);
+
+
+        for (int i = 0; i < 100; i++) {
+            scoreManager.updatePacGumEaten(mock(PacGum.class));
+        }
+
+        verify(observer, times(1)).updateLevelUpEvent();
     }
 
 
