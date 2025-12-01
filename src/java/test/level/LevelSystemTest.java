@@ -12,10 +12,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import javax.xml.crypto.Data;
 
-import static com.github.stefanbirkner.systemlambda.SystemLambda.catchSystemExit;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class LevelSystemTest {
