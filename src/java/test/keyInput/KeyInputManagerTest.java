@@ -48,7 +48,7 @@ public class KeyInputManagerTest {
     }
 
     @Test
-    public void testKeyInputManager_InputFuctionTest() throws Exception {
+    public void testKeyInputManager_InputFunctionTest() throws Exception {
         // 현재 state의 input이 불리고 있는지 테스트
 
         GameState mockState = mock(GameState.class);

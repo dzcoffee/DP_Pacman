@@ -16,13 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 public class GameStateTest {
-
-    @Mock
-    private Pacman pacman;
-
-    @Mock
-    private LevelUIPanel levelUIPanel;
-
     @Mock
     private KeyHandler keyHandler;
 
@@ -39,17 +32,8 @@ public class GameStateTest {
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
 
-        // state 내부 커맨드를 mock으로 설정
-        playState = new PlayState(new PacmanInputCommand(pacman));
-        pauseState = new PauseState(new LevelInputCommand(levelUIPanel));
-
-        var pacCmdField = PlayState.class.getDeclaredField("pacmanInputCommand");
-        pacCmdField.setAccessible(true);
-        pacCmdField.set(playState, pacmanCommand);
-
-        var lvlCmdField = PauseState.class.getDeclaredField("levelInputCommand");
-        lvlCmdField.setAccessible(true);
-        lvlCmdField.set(pauseState, levelCommand);
+        playState = new PlayState(pacmanCommand);
+        pauseState = new PauseState(levelCommand);
     }
 
     @Test
