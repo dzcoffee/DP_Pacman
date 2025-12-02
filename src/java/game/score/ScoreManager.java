@@ -25,6 +25,10 @@ public class ScoreManager implements Observer, ILevelUpEventSubject {
         observerCollection = new ArrayList<>();
     }
 
+    public int getScore() {
+        return this.score;
+    }
+
 
     public void setUIPanel(UIPanel uiPanel) {
         this.uiPanel = uiPanel;
@@ -50,7 +54,10 @@ public class ScoreManager implements Observer, ILevelUpEventSubject {
     private void updateScore(int score) {
         this.score += score;
         this.currentScore += score;
-        uiPanel.updateScore(this.score);
+        if (uiPanel != null) {
+
+            uiPanel.updateScore(this.score);
+        }
         if (currentScore >= LEVELUP_SCORE) {
             currentScore -= LEVELUP_SCORE;
             notifyLevelUpEvent();

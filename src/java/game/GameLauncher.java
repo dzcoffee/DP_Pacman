@@ -22,7 +22,7 @@ public class GameLauncher {
 
         //Création de la "zone de jeu"
         try {
-            gameplayPanel = new GameplayPanel(448,496);
+            gameplayPanel = new GameplayPanel(448, 496);
             gameWindow.add(gameplayPanel);
         } catch (IOException e) {
             e.printStackTrace();
@@ -37,21 +37,21 @@ public class GameLauncher {
         gbc.weightx = 1.0;
         gbc.gridx = 0;
 
-        uiPanel = new UIPanel(288, 496);
+        uiPanel = new UIPanel(288, 0);
         uiPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         gbc.gridy = 0;      // 첫 번째 줄에 위치
-        gbc.weighty = 0.2;
+        gbc.weighty = 1.0;
         uiContainer.add(uiPanel, gbc);
 
-        statusUIPanel = new StatusUIPanel(72, 496);
+        statusUIPanel = new StatusUIPanel(72, 0);
         statusUIPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.WHITE));
         gbc.gridy = 1;      // 두번째 줄에 위치
-        gbc.weighty = 0.2;
+        gbc.weighty = 1.0;
         uiContainer.add(statusUIPanel, gbc);
 
-        levelUIPanel = new LevelUIPanel(288, 496);
+        levelUIPanel = new LevelUIPanel(288, 0);
         gbc.gridy = 2;      // 두번째 줄에 위치
-        gbc.weighty = 0.6;
+        gbc.weighty = 5.0;
         uiContainer.add(levelUIPanel, gbc);
 
         // 4. UI 컨테이너를 gameWindow의 우측(EAST)에 추가
@@ -73,7 +73,8 @@ public class GameLauncher {
     }
 
     public static void addLevelMangerInLevelUIPanel(LevelManager levelManager) {
-        levelUIPanel.setLevelManager(levelManager);
+        if (levelUIPanel != null)
+            levelUIPanel.setLevelManager(levelManager);
     }
 
     public static StatusUIPanel getStatusUIPanel() {

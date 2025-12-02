@@ -1,4 +1,4 @@
-package ghost;
+package test.ghost;
 
 import game.Game;
 import game.GameplayPanel;
@@ -12,7 +12,11 @@ import game.ghostStrategies.ClydeStrategy;
 import game.ghostStrategies.IGhostStrategy;
 import game.ghostStrategies.InkyStrategy;
 import game.ghostStrategies.PinkyStrategy;
+import game.utils.SoundManager;
 import java.io.IOException;
+
+import game.level.LevelManager;
+import game.score.ScoreManager;
 import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +29,9 @@ public class GhostStrategyTest {
     @BeforeClass
     public static void setup() throws IOException {
         game = new Game();
+        LevelManager levelManager = new LevelManager();
+        ScoreManager scoreManager = new ScoreManager();
+        game.init(levelManager, scoreManager, SoundManager.getInstance());
         gameplayPanel = new GameplayPanel(100,100);
     }
 
