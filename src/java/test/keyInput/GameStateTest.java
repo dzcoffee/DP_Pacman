@@ -40,8 +40,8 @@ public class GameStateTest {
         MockitoAnnotations.openMocks(this);
 
         // state 내부 커맨드를 mock으로 설정
-        playState = new PlayState(pacman);
-        pauseState = new PauseState(levelUIPanel);
+        playState = new PlayState(new PacmanInputCommand(pacman));
+        pauseState = new PauseState(new LevelInputCommand(levelUIPanel));
 
         var pacCmdField = PlayState.class.getDeclaredField("pacmanInputCommand");
         pacCmdField.setAccessible(true);

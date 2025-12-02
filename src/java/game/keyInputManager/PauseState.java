@@ -1,14 +1,15 @@
 package game.keyInputManager;
 
 import game.LevelUIPanel;
+import game.keyInputManager.command.InputCommand;
 import game.keyInputManager.command.LevelInputCommand;
 import game.utils.KeyHandler;
 
 public class PauseState extends GameState{
-    private LevelInputCommand levelInputCommand;
+    private InputCommand levelInputCommand;
 
-    public PauseState(LevelUIPanel levelUIPannel) {
-        levelInputCommand = new LevelInputCommand(levelUIPannel);
+    public PauseState(InputCommand levelInputCommand) {
+        this.levelInputCommand = levelInputCommand;
     }
 
     @Override
