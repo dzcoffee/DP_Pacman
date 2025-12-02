@@ -1,11 +1,8 @@
 package game;
 
+import game.level.ILevelUpEventObserver;
 import game.utils.KeyHandler;
-import game.utils.WallCollisionDetector;
-import game.level.GameLevelData;
-import game.level.ILevelDataObserver;
 import game.level.LevelManager;
-import game.utils.KeyHandler;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -14,7 +11,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 
 //TODO Merge이후 ILevelDataObserver를 implements하도록 구현하여야 함
-public class LevelUIPanel extends JPanel implements ILevelDataObserver {
+public class LevelUIPanel extends JPanel implements ILevelUpEventObserver {
     public static int width;
     public static int height;
 
@@ -30,7 +27,9 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     private JPanel[] optionItems;      // 개별 옵션 패널 (배경색 변경용)
     private JLabel[] optionTexts;      // 개별 옵션 텍스트
     private JPanel operationPanel;
-    private int currentSelectionIndex = 0; // 현재 선택된 옵션 (0~3)
+    private int currentSelectionIndex = 3; // 현재 선택된 옵션 (0~3)
+
+    private boolean[] SELECT_CHECK = new boolean[4];
 
     private final String[] OPTION_NAMES = {
             "PACMAN SPEED UP",
@@ -41,9 +40,20 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
 
     //update를 받게 되면 LevelUI의 상태를 변경(아마 그런 용도로 작성하신 게 아닐까?)
     // 그럼 얘가 LevelManager라는 Observer에게 명령을 내리면서도 구독중이라 상태가 변하는? 구조? 이게 맞는지
+//    @Override
+//    public void updateLevelData(GameLevelData data) {
+//        showLevelUpMenu(!nowVisible);
+//    }
+
     @Override
-    public void updateLevelData(GameLevelData data) {
+    public void updateLevelUpEvent(){
+        updateLabel(1);
         showLevelUpMenu(!nowVisible);
+    }
+
+    @Override
+    public void updateLevelUpEnd(){
+
     }
 
     public void setLevelManager(LevelManager levelManager) {
@@ -67,8 +77,9 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
 
         else if (k.k_enter.isPressed) {
             executeSelectedOption(); // 선택된 옵션 실행
-
+            showLevelUpMenu(!nowVisible);
             k.k_enter.isPressed = false;
+
         }
     }
 
@@ -76,9 +87,11 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
         switch (currentSelectionIndex){
             case 0:
                 levelManager.increasePacmanSpeed();
+                SELECT_CHECK[currentSelectionIndex] = true;
                 break;
             case 1:
                 levelManager.decreaseGhostSpeed();
+                SELECT_CHECK[currentSelectionIndex] = true;
                 break;
             case 2:
                 levelManager.increasePacmanLife();
@@ -94,9 +107,11 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     public LevelUIPanel(int width, int height) {
         this.width = width;
         this.height = height;
+        this.setLayout(new BorderLayout());
+
         setPreferredSize(new Dimension(width, height));
         this.setBackground(Color.black);
-        levelLabel = new JLabel("Level: " + level);
+        levelLabel = new JLabel("Level: " + level, SwingConstants.CENTER);
         levelLabel.setFont(levelLabel.getFont().deriveFont(20.0F));
         levelLabel.setForeground(Color.white);
 
@@ -108,7 +123,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     }
 
     //level Label Update하는 메서드
-    public void updateLabel(int incrLevel) {
+    private void updateLabel(int incrLevel) {
         this.level += incrLevel;
         this.levelLabel.setText("Level: " + level);
     }
@@ -183,7 +198,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
         this.add(optionsPanel, BorderLayout.CENTER);
         this.add(operationPanel, BorderLayout.SOUTH);
 
-        showLevelUpMenu(true);
+        //showLevelUpMenu(true);
         //TODO 테스트 용으로 임시로 작성함 이후 연결 시에는 주석처리 필요
     }
 
@@ -203,18 +218,31 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     }
 
     public void changeSelection(int direction) {
-        //direction을 +1로 하면 아래로, -1로 하면 위로
         if (!optionsPanel.isVisible()) return; // 메뉴가 안 보이면 무시
 
-        currentSelectionIndex += direction;
+        // 무한 루프 방지용 (모든 옵션이 선택된 경우 대비)
+        int originalIndex = currentSelectionIndex;
 
-        // 옵션 Index 선택이 순환되도록 구현하였음
-        // (아래는 옵션이 4개임을 예시로 들어 설명, 실제로는 optionItems의 갯수에 따라 다르게 되도록 구현)
-        // index 3 -> 4가 되면 0번째로 순환
-        // index 0 -> -1이 되면 3번째로 순환
-        if (currentSelectionIndex >= optionItems.length) currentSelectionIndex = 0;
-        if (currentSelectionIndex < 0) currentSelectionIndex = optionItems.length - 1;
+        do {
+            // 1. 일단 한 칸 이동
+            currentSelectionIndex += direction;
 
+            // 2. 순환(Wrap) 로직 처리
+            if (currentSelectionIndex >= optionItems.length) {
+                currentSelectionIndex = 0;
+            }
+            if (currentSelectionIndex < 0) {
+                currentSelectionIndex = optionItems.length - 1;
+            }
+
+            // 3. 만약 한 바퀴를 다 돌아서 제자리로 왔다면 (모든 옵션이 이미 선택됨) 루프 종료
+            if (currentSelectionIndex == originalIndex) return;
+
+            // 4. 현재 위치가 '이미 선택된 상태(true)'라면 루프를 계속 돕니다.
+            //    false(선택 안 된 상태)가 나올 때까지 반복
+        } while (SELECT_CHECK[currentSelectionIndex]);
+
+        // 5. 최종 결정된 위치로 UI 업데이트
         updateSelectionVisual();
     }
 
@@ -243,4 +271,7 @@ public class LevelUIPanel extends JPanel implements ILevelDataObserver {
     //TODO get메서드는 Encapsulation 위배로 사용하지 않는 게 좋으나 일단 UIPanel과 유사하게 구성하기 위해 작성
     public int getLevel() {return this.level;}
 
+    public boolean getNowVisible(){
+        return nowVisible;
+    }
 }

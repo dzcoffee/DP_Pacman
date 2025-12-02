@@ -58,7 +58,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
     }
 
-    public void init(LevelManager levelManager, ScoreManager scoreManager){
+    public void init(LevelManager levelManager, ScoreManager scoreManager, SoundManager soundManager){
         //Initialisation du jeu
 
         //Chargement du fichier csv du niveau
@@ -74,11 +74,9 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
 
         CollisionDetector collisionDetector = new CollisionDetector(this);
         AbstractGhostFactory abstractGhostFactory = null;
-        this.soundManager = new SoundManager();
+        this.soundManager = soundManager;
         soundManager.gameStart();
-
         Map<String, List<TeleportZone>> portalMap = new HashMap<>(); // 포탈 저장용
-
         //Le niveau a une "grille", et pour chaque case du fichier csv, on affiche une entité parculière sur une case de la grille selon le caracère présent
         for(int xx = 0 ; xx < cellsPerRow ; xx++) {
             for(int yy = 0 ; yy < cellsPerColumn ; yy++) {
@@ -181,6 +179,7 @@ public class Game implements Observer, ILevelUpEventObserver, GameMediator {
         scoreManager.registerObserver(this);
         scoreManager.registerObserver(keyInputManager);
         scoreManager.setUIPanel(GameLauncher.getUIPanel());
+        scoreManager.registerObserver(GameLauncher.getLevelUIPanel());
     }
 
     public void eatGhostAll(){

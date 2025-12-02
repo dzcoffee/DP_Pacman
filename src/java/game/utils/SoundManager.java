@@ -11,7 +11,10 @@ import java.util.Map;
 public class SoundManager {
     private Map<String, Clip> soundClips;
     private int pacGumSoundState = 1;
-    public SoundManager() {
+
+    private static final SoundManager uniqueSoundManager = new SoundManager();
+
+    private SoundManager() {
         try {
             soundClips = new HashMap<>();
             loadSound("sounds/pacgum_eat_1.wav", "pacgum1");
@@ -25,6 +28,8 @@ public class SoundManager {
             e.printStackTrace();
         }
     }
+
+    public static SoundManager getInstance() { return uniqueSoundManager; }
 
     private void loadSound(String path, String name) {
     try {
