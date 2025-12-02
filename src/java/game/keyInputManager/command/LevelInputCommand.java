@@ -7,8 +7,8 @@ public class LevelInputCommand implements InputCommand {
 
     private final LevelUIPanel target;
 
-    public LevelInputCommand(LevelUIPanel levelUIPannel) {
-        this.target = levelUIPannel;
+    public LevelInputCommand(LevelUIPanel levelUIPanel) {
+        this.target = levelUIPanel;
     }
 
     @Override

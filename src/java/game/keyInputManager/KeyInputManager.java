@@ -2,6 +2,8 @@ package game.keyInputManager;
 
 import game.LevelUIPanel;
 import game.entities.Pacman;
+import game.keyInputManager.command.LevelInputCommand;
+import game.keyInputManager.command.PacmanInputCommand;
 import game.level.ILevelUpEventObserver;
 import game.utils.KeyHandler;
 
@@ -12,9 +14,9 @@ public class KeyInputManager implements ILevelUpEventObserver {
     private final GameState pauseState;
 
 
-    public KeyInputManager(Pacman pacman, LevelUIPanel levelUIPannel) {
-        playState = new PlayState(pacman);
-        pauseState = new PauseState(levelUIPannel);
+    public KeyInputManager(Pacman pacman, LevelUIPanel levelUIPanel) {
+        playState = new PlayState(new PacmanInputCommand(pacman));
+        pauseState = new PauseState(new LevelInputCommand(levelUIPanel));
         gameState = playState;
 
     }

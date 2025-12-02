@@ -2,15 +2,16 @@ package game.keyInputManager;
 
 import game.GameplayPanel;
 import game.entities.Pacman;
+import game.keyInputManager.command.InputCommand;
 import game.keyInputManager.command.PacmanInputCommand;
 import game.utils.KeyHandler;
 
 public class PlayState extends GameState {
 
-    private PacmanInputCommand pacmanInputCommand;
+    private InputCommand pacmanInputCommand;
 
-    public PlayState(Pacman pacman) {
-        pacmanInputCommand = new PacmanInputCommand(pacman);
+    public PlayState(InputCommand pacmanInputCommand) {
+        this.pacmanInputCommand = pacmanInputCommand;
     }
 
     @Override
