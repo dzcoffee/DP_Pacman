@@ -70,12 +70,9 @@ public class StatusUIPanelTest {
         verifyLabelsText("SPEED: 2.0x", "GHOST: 0.5x", "LIFE: 3");
     }
 
-    // --- Helper Methods ---
 
-    /**
-     * Private Label에 직접 접근할 수 없으므로, Component 트리를 탐색하여 텍스트를 검증합니다.
-     * 구조: StatusUIPanel -> statusRowPanel (index 0) -> JLabels (index 0, 1, 2)
-     */
+     // Private Label에 직접 접근할 수 없으므로, Component 트리를 탐색하여 텍스트를 검증합니다.
+
     private void verifyLabelsText(String expectedSpeed, String expectedGhost, String expectedLife) {
 
         // 1. 메인 패널에서 statusRowPanel 추출
