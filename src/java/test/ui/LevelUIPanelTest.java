@@ -52,7 +52,7 @@ public class LevelUIPanelTest {
         assertEquals(2, levelUIPanel.getLevel(), "레벨은 2가 되어야 한다.");
 
         levelUIPanel.updateLevelUpEvent(); // 레벨 3 증가
-        assertEquals(3, levelUIPanel.getLevel(), "레벨은 5가 되어야 한다.");
+        assertEquals(3, levelUIPanel.getLevel(), "레벨은 3가 되어야 한다.");
     }
 
     @Test
