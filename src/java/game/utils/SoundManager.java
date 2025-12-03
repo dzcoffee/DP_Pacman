@@ -8,7 +8,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SoundManager {
+import game.GameColleague;
+import game.GameMediator;
+
+public class SoundManager implements GameColleague {
     private Map<String, Clip> soundClips;
     private int pacGumSoundState = 1;
 
@@ -30,6 +33,9 @@ public class SoundManager {
     }
 
     public static SoundManager getInstance() { return uniqueSoundManager; }
+
+    @Override
+    public void setMediator(GameMediator mediator) {}
 
     private void loadSound(String path, String name) {
     try {
