@@ -8,7 +8,9 @@ import game.entities.ghosts.Clyde;
 import game.entities.ghosts.Ghost;
 import game.utils.CollisionDetector;
 import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -32,7 +34,7 @@ public class CollisionDetectorTest {
     private Ghost unIntersectGhost; //충돌하지 않는 고스트
     private List<Entity> entities;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
 

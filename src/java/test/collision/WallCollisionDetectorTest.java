@@ -10,6 +10,7 @@ import game.ghostFactory.BlinkyFactory;
 import game.utils.WallCollisionDetector;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 
 import java.awt.*;
@@ -25,7 +26,7 @@ public class WallCollisionDetectorTest {
     private int cellSize = 8;
     AbstractGhostFactory abstractGhostFactory = null;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 
     }
