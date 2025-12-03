@@ -55,6 +55,15 @@ public class GameSoundTest {
         verify(mockSoundManager, times(1)).playPacGumSound();
     }
 
+    // 유령을 먹으면 배경음이 변경되어야한다.
+    @Test
+    public void testGhostEaten() {
+        Blinky blinky = new Blinky(0, 0);
+        blinky.setMediator(game);
+        blinky.switchEatenMode(); 
+        verify(mockSoundManager, times(1)).playEatenLoop();
+    }
+
     // 유령이 집에 도착하면 소리를 끄라고 해야 한다.
     @Test
     public void testGhostArrivedHome() {
