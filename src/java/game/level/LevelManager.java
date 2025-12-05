@@ -133,8 +133,12 @@ public class LevelManager implements Observer,ILevelDataSubject, ILevelUpEventSu
                 gh.getState().eaten();
             }
             else{
-                System.exit(0);
+                exitGame();
             }
         }
+    }
+
+    protected void exitGame() {
+        System.exit(0);
     }
 }
